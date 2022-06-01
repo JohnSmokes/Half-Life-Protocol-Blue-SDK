@@ -777,6 +777,8 @@ void ClientPrecache( void )
 	PRECACHE_SOUND("player/pl_pain7.wav");
 
 	PRECACHE_MODEL("models/player.mdl");
+	PRECACHE_MODEL("sprites/smokepuff.spr");
+	PRECACHE_MODEL("sprites/xfire.spr");
 
 	// hud sounds
 

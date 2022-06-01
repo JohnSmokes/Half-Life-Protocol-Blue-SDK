@@ -416,3 +416,21 @@ int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 )
 {
 	return 0;
 }
+
+void EV_HLDM_EmitSmoke(Vector org)
+{
+	int  GrenadeFireSprite = gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/smokepuff.spr");
+	TEMPENTITY* GrenadeFire = gEngfuncs.pEfxAPI->R_TempSprite(org, Vector(0,0,20), 0.7, GrenadeFireSprite, kRenderTransAdd, kRenderFxNone, 1.0, 0.3, FTENT_SPRANIMATE | FTENT_FADEOUT | FTENT_COLLIDEKILL);
+	if (GrenadeFire)
+	{// sprite created successfully, adjust some things
+		GrenadeFire->fadeSpeed = 3.0;
+		GrenadeFire->entity.curstate.framerate = 25.0;
+		GrenadeFire->entity.curstate.renderamt = 100;
+		GrenadeFire->entity.curstate.rendercolor.r = 255;
+		GrenadeFire->entity.curstate.rendercolor.g = 255;
+		GrenadeFire->entity.curstate.rendercolor.b = 255;
+		GrenadeFire->entity.curstate.scale = .5;
+	}
+
+	//gEngfuncs.Con_Printf("debuggg\n");
+}

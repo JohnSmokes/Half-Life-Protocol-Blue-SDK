@@ -17,6 +17,8 @@
 #include "cl_entity.h"
 #include "dlight.h"
 #include "triangleapi.h"
+#include "r_efx.h"
+#include "event_api.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -48,6 +50,8 @@ const char *legs_bones[] =
 { "Bip01 R Leg1" },
 { "Bip01 R Foot" },
 };
+
+extern void EV_HLDM_EmitSmoke(Vector org);
 
 /*
 ====================
@@ -1192,6 +1196,43 @@ int CStudioModelRenderer::StudioDrawModel( int flags )
 		IEngineStudio.StudioSetRemapColors( m_nTopColor, m_nBottomColor );
 
 		StudioRenderModel( );
+
+		// flare weapon effect
+		if (m_pCurrentEntity == gEngfuncs.GetViewModel());
+		{
+			if (!strcmp(m_pCurrentEntity->model->name, "models/v_flare.mdl"))
+			{
+				Vector org = m_pCurrentEntity->attachment[0];
+
+				if (gHUD.m_flNextSmokeEmit < gHUD.m_flTime)
+				{
+					gEngfuncs.pEfxAPI->R_SparkStreaks(org, 1, -100, 100);
+
+					int  GrenadeFireSprite = gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/xfire.spr");
+					TEMPENTITY* GrenadeFire = gEngfuncs.pEfxAPI->R_TempSprite(org, Vector(0, 0, 10), 0.7, GrenadeFireSprite, kRenderTransAdd, kRenderFxNone, 1.0, 0.3, FTENT_SPRANIMATE | FTENT_FADEOUT | FTENT_COLLIDEKILL);
+					if (GrenadeFire)
+					{// sprite created successfully, adjust some things
+						GrenadeFire->fadeSpeed = 3.0;
+						GrenadeFire->entity.curstate.framerate = 25.0;
+						GrenadeFire->entity.curstate.renderamt = 100;
+						GrenadeFire->entity.curstate.rendercolor.r = 255;
+						GrenadeFire->entity.curstate.rendercolor.g = 255;
+						GrenadeFire->entity.curstate.rendercolor.b = 255;
+						GrenadeFire->entity.curstate.scale = .5;
+					}
+
+					gHUD.m_flNextSmokeEmit = gHUD.m_flTime + 0.1f;
+				}
+
+				if (gHUD.m_flNextSmoke < gHUD.m_flTime)
+				{
+					EV_HLDM_EmitSmoke(org);
+
+					gHUD.m_flNextSmoke = gHUD.m_flTime + 0.3f;
+				}
+			}
+		}
+
 	}
 
 	return 1;

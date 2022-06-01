@@ -582,6 +582,8 @@ public:
 	float		velz;
 
 	bool hasFlashlight;
+	float m_flNextSmokeEmit;
+	float m_flNextSmoke;
 
 	int m_iFontHeight;
 	int DrawHudNumber(int x, int y, int iFlags, int iNumber, int r, int g, int b);

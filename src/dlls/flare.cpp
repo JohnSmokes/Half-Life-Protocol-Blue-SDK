@@ -48,6 +48,7 @@ public:
 	float m_flNextFlareSound;
 	int m_iFlareType;
 	float m_flNextFlareType;
+	float m_flNextIdleAnim;
 };
 LINK_ENTITY_TO_CLASS( weapon_flare, CFlare);
 
@@ -117,6 +118,13 @@ void CFlare::EmitLight()
 		{
 			EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/flare_burning.wav", 5, ATTN_NORM, 0, 95 + RANDOM_LONG(0, 0x1f));
 			m_flNextFlareSound = gpGlobals->time + 2.0f;
+		}
+
+		// play idle animation
+		if (m_flNextIdleAnim < gpGlobals->time)
+		{
+			SendWeaponAnim(CROWBAR_IDLE);
+			m_flNextIdleAnim = gpGlobals->time + 2.8f;
 		}
 
 		// flickering effect

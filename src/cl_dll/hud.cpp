@@ -415,6 +415,8 @@ void CHud :: VidInit( void )
 	int j;
 	m_scrinfo.iSize = sizeof(m_scrinfo);
 	GetScreenInfo(&m_scrinfo);
+	m_flNextSmokeEmit = 0;
+	m_flNextSmoke = 0;
 
 	// ----------
 	// Load Sprites
