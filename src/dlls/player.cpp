@@ -190,6 +190,7 @@ int gmsgStatusValue = 0;
 
 int gmsgAddELight = 0;
 int gmsgCheckFlash = 0;
+int gmsgRenderFire = 0;
 
 
 void LinkUserMessages( void )
@@ -239,6 +240,7 @@ void LinkUserMessages( void )
 
 	gmsgAddELight = REG_USER_MSG("AddELight", -1); //magic nipples - elights
 	gmsgCheckFlash = REG_USER_MSG("CheckFlash", -1); //bacontsu - send info to client if we have flashlight
+	gmsgRenderFire = REG_USER_MSG("RenderFire", -1); // bacontsu - clientside burning effect
 }
 
 LINK_ENTITY_TO_CLASS( player, CBasePlayer );

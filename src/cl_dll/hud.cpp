@@ -274,6 +274,11 @@ int __MsgFunc_CheckFlash(const char* pszName, int iSize, void* pbuf) //bacontsu 
 {
 	return gHUD.MsgFunc_CheckFlash(pszName, iSize, pbuf);
 }
+
+int __MsgFunc_RenderFire(const char* pszName, int iSize, void* pbuf) //bacontsu - fire particle
+{
+	return gHUD.MsgFunc_RenderFire(pszName, iSize, pbuf);
+}
  
 // This is called every time the DLL is loaded
 void CHud :: Init( void )
@@ -310,6 +315,7 @@ void CHud :: Init( void )
 
 	HOOK_MESSAGE(AddELight); //magic nipples - elights
 	HOOK_MESSAGE(CheckFlash);
+	HOOK_MESSAGE(RenderFire);
 
 	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );

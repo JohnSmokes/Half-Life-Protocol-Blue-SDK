@@ -434,3 +434,34 @@ void EV_HLDM_EmitSmoke(Vector org)
 
 	//gEngfuncs.Con_Printf("debuggg\n");
 }
+
+#define MAX_FIRE_PARTICLE 20
+
+void EV_HLDM_RenderFire(Vector org, Vector mins, Vector maxs)
+{
+	for(int i = 0; i < MAX_FIRE_PARTICLE; i++)
+	{
+		Vector size = maxs - mins;
+		Vector vecCombined;
+		vecCombined = org;
+		
+		// randomize sprite location by entity size
+		vecCombined.x += gEngfuncs.pfnRandomLong(-0.5f * size.x, 0.5f * size.x);
+		vecCombined.y += gEngfuncs.pfnRandomLong(-0.5f * size.y, 0.5f * size.y);
+		vecCombined.z += gEngfuncs.pfnRandomLong(0, size.z);
+
+
+		int  GrenadeFireSprite = gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/xfire.spr");
+		TEMPENTITY* GrenadeFire = gEngfuncs.pEfxAPI->R_TempSprite(vecCombined, Vector(0,0,20), 0.7, GrenadeFireSprite, kRenderTransAdd, kRenderFxNone, 1.0, 0.3, FTENT_SPRANIMATE | FTENT_FADEOUT | FTENT_COLLIDEKILL);
+		if (GrenadeFire)
+		{// sprite created successfully, adjust some things
+			GrenadeFire->fadeSpeed = 3.0;
+			GrenadeFire->entity.curstate.framerate = 25.0;
+			GrenadeFire->entity.curstate.renderamt = 100;
+			GrenadeFire->entity.curstate.rendercolor.r = 255;
+			GrenadeFire->entity.curstate.rendercolor.g = 255;
+			GrenadeFire->entity.curstate.rendercolor.b = 255;
+			GrenadeFire->entity.curstate.scale = .5;
+		}
+	}
+}
