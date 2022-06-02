@@ -44,7 +44,27 @@ extern DLL_GLOBAL	short	g_sModelIndexLaser;// holds the index for the laser beam
 extern DLL_GLOBAL	short	g_sModelIndexLaserDot;// holds the index for the laser beam dot
 
 extern CGraph WorldGraph;// the world node graph
+extern int gmsgRenderFire;
 
+// must match definition in modelgen.h
+enum synctype_t
+{
+	ST_SYNC = 0,
+	ST_RAND
+};
+
+typedef struct {
+	int			ident;
+	int			version;
+	int			type;
+	int			texFormat;
+	float		boundingradius;
+	int			width;
+	int			height;
+	int			numframes;
+	float		beamlength;
+	synctype_t	synctype;
+} dsprite_t;
 
 
 // Global Savedata for monster
@@ -525,6 +545,7 @@ void CBaseMonster :: MonsterThink ( void )
 
 
 	RunAI();
+	RunFire();
 
 	float flInterval = StudioFrameAdvance( ); // animate
 // start or end a fidget
@@ -3456,4 +3477,58 @@ BOOL CBaseMonster :: ShouldFadeOnDeath( void )
 		return TRUE;
 
 	return FALSE;
+}
+
+void CBaseMonster::RunFire(void)
+{
+	if (m_bIsOnFire == FALSE) // check if entity is on fire
+		return;
+
+	if (m_flFireTime < gpGlobals->time) // draw a fire sprite
+	{
+		UTIL_MakeVectors(pev->angles);
+
+		// clientside fire particles
+		MESSAGE_BEGIN(MSG_PVS, gmsgRenderFire, NULL, pev);
+		WRITE_COORD(pev->origin.x); // origin
+		WRITE_COORD(pev->origin.y);
+		WRITE_COORD(pev->origin.z);
+		
+		WRITE_COORD(pev->mins.x); // origin
+		WRITE_COORD(pev->mins.y);
+		WRITE_COORD(pev->mins.z);
+
+		WRITE_COORD(pev->maxs.x); // origin
+		WRITE_COORD(pev->maxs.y);
+		WRITE_COORD(pev->maxs.z);
+		MESSAGE_END();
+
+		// emit light while burning
+		Vector vecShootOrigin = pev->origin;
+		MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
+		WRITE_BYTE(TE_DLIGHT);
+		WRITE_COORD(vecShootOrigin.x); // origin
+		WRITE_COORD(vecShootOrigin.y);
+		WRITE_COORD(vecShootOrigin.z);
+		WRITE_BYTE(15);     // radius
+		WRITE_BYTE(255);     // R
+		WRITE_BYTE(128);     // G
+		WRITE_BYTE(128);     // B
+		WRITE_BYTE(5);     // life * 10
+		WRITE_BYTE(10); // decay
+		MESSAGE_END();
+
+		if(pev->deadflag == DEAD_NO)
+		EMIT_SOUND(ENT(pev), CHAN_WEAPON, "ambience/burning1.wav", 1, ATTN_NORM);
+
+		m_flFireTime = gpGlobals->time + 0.1f;
+	}
+
+	if (m_flNextFireDamage < gpGlobals->time) // damage the entity by 5 unit, every 1 second
+	{
+		this->TakeDamage(pev, pev, 5, DMG_BURN);
+
+		m_flNextFireDamage = gpGlobals->time + 1.0f;
+	}
+
 }

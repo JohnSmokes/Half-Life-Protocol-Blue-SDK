@@ -263,6 +263,12 @@ void CFlareItem::FlareSlide(CBaseEntity* pOther)
 	if (pOther->edict() == pev->owner)
 		return;
 
+	if (FClassnameIs(pOther->pev, "monster_zombie"))
+	{
+		CBaseMonster* pTarget = pOther->MyMonsterPointer();
+		pTarget->m_bIsOnFire = TRUE;
+	}
+
 	// pev->avelocity = Vector (300, 300, 300);
 	pev->gravity = 1;// normal gravity now
 
@@ -281,6 +287,7 @@ void CFlareItem::FlareSlide(CBaseEntity* pOther)
 	{
 		BounceSound();
 	}
+
 }
 
 void CFlareItem::FlareThink(void)

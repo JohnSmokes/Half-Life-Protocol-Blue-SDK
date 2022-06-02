@@ -146,3 +146,25 @@ int CHud::MsgFunc_CheckFlash(const char* pszName, int iSize, void* pbuf)
 	hasFlashlight = READ_BYTE();
 	return 1;
 }
+
+extern void EV_HLDM_RenderFire(Vector org, Vector mins, Vector maxs);
+
+int CHud::MsgFunc_RenderFire(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+	float x = READ_COORD();
+	float y = READ_COORD();
+	float z = READ_COORD();
+
+	float minX = READ_COORD();
+	float minY = READ_COORD();
+	float minZ = READ_COORD();
+
+	float maxX = READ_COORD();
+	float maxY = READ_COORD();
+	float maxZ = READ_COORD();
+
+	EV_HLDM_RenderFire(Vector(x, y, z), Vector(minX, minY, minZ), Vector(maxX, maxY, maxZ));
+
+	return 1;
+}

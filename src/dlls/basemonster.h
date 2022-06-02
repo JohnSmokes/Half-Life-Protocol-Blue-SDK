@@ -13,6 +13,8 @@
 *
 ****/
 
+#include "effects.h"
+
 #ifndef BASEMONSTER_H
 #define BASEMONSTER_H
 
@@ -333,6 +335,13 @@ public:
 	BOOL CineCleanup( );
 
 	CBaseEntity* DropItem ( char *pszItemName, const Vector &vecPos, const Vector &vecAng );// drop an item.
+
+	// bacontsu - burning state
+	BOOL m_bIsOnFire;
+	float m_flNextFireDamage;
+	float m_flFireTime;
+	void RunFire(void);
+
 };
 
 
