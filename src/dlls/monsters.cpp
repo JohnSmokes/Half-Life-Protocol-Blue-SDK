@@ -3469,7 +3469,6 @@ CBaseEntity* CBaseMonster :: DropItem ( char *pszItemName, const Vector &vecPos,
 
 }
 
-
 BOOL CBaseMonster :: ShouldFadeOnDeath( void )
 {
 	// if flagged to fade out or I have an owner (I came from a monster spawner)
@@ -3479,6 +3478,9 @@ BOOL CBaseMonster :: ShouldFadeOnDeath( void )
 	return FALSE;
 }
 
+//=========================================================
+// RunFire - Burning logic by Bacontsu
+//=========================================================
 void CBaseMonster::RunFire(void)
 {
 	if (m_bIsOnFire == FALSE) // check if entity is on fire

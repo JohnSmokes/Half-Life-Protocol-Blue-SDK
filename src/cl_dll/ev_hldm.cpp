@@ -417,6 +417,13 @@ int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 )
 	return 0;
 }
 
+/*
+================
+EmitSmoke
+
+Emit smoke particles at the given place
+================
+*/
 void EV_HLDM_EmitSmoke(Vector org)
 {
 	int  GrenadeFireSprite = gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/smokepuff.spr");
@@ -436,7 +443,13 @@ void EV_HLDM_EmitSmoke(Vector org)
 }
 
 #define MAX_FIRE_PARTICLE 20
+/*
+================
+RenderFire
 
+Fill entity's bbox with fire particles
+================
+*/
 void EV_HLDM_RenderFire(Vector org, Vector mins, Vector maxs)
 {
 	for(int i = 0; i < MAX_FIRE_PARTICLE; i++)

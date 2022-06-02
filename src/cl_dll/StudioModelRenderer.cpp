@@ -1230,6 +1230,14 @@ int CStudioModelRenderer::StudioDrawModel( int flags )
 
 					gHUD.m_flNextSmoke = gHUD.m_flTime + 0.3f;
 				}
+
+				// clientside changelevel timer bug thing - this should've been done in VidInit() but for some reason
+				// it doesnt work, weird
+				if (gHUD.m_flNextSmoke > gHUD.m_flTime + 0.3f) gHUD.m_flNextSmoke = 0;
+				if (gHUD.m_flNextSmokeEmit > gHUD.m_flTime + 0.1f) gHUD.m_flNextSmokeEmit = 0;
+
+				// DEBUG!
+				// gEngfuncs.Con_Printf("%f %f \n", gHUD.m_flNextSmoke, gHUD.m_flTime);
 			}
 		}
 
