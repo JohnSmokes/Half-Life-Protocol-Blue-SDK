@@ -36,3 +36,9 @@
 [Ss]rc/[Bb]uild/
 [Bb]uild/
 [Dd]ev/
+src/cl_dll/cl_dll.vcxproj
+src/dlls/hl.vcxproj
+src/engine/engine.vcxproj
+src/game_launch/game.vcxproj
+src/mainui/mainui.vcxproj
+*.vcxproj
