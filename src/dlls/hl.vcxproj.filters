@@ -360,6 +360,9 @@
     <ClCompile Include="vgui_scope.cpp">
       <Filter>Source Files\Weapons</Filter>
     </ClCompile>
+    <ClCompile Include="env_warpball.cpp">
+      <Filter>Source Files\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="activitymap.h">
@@ -499,9 +502,6 @@
     </ClInclude>
     <ClInclude Include="barney.h">
       <Filter>Header Files\Monsters</Filter>
-    </ClInclude>
-    <ClInclude Include="scar.h">
-      <Filter>Header Files\Weapons</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

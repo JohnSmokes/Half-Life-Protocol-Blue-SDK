@@ -172,6 +172,7 @@
     <ClCompile Include="effects.cpp" />
     <ClCompile Include="egon.cpp" />
     <ClCompile Include="env_model.cpp" />
+    <ClCompile Include="env_warpball.cpp" />
     <ClCompile Include="explode.cpp" />
     <ClCompile Include="flare.cpp" />
     <ClCompile Include="flyingmonster.cpp" />

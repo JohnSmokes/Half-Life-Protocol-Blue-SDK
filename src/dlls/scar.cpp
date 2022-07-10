@@ -65,8 +65,8 @@ int CScar::GetItemInfo(ItemInfo* p)
 	p->pszAmmo2 = NULL;
 	p->iMaxAmmo2 = -1;
 	p->iMaxClip = SCAR_MAX_CLIP;
-	p->iSlot = 1;
-	p->iPosition = 0;
+	p->iSlot = 2;
+	p->iPosition = 3;
 	p->iFlags = 0;
 	p->iId = m_iId = WEAPON_SCAR;
 	p->iWeight = SCAR_WEIGHT;
