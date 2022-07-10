@@ -34,22 +34,33 @@ enum scar_e {
 class CScar : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int iItemSlot(void) { return 2; }
-	int GetItemInfo(ItemInfo* p);
+	void Spawn() ;
+	void Precache() ;
+	int iItemSlot()  { return 2; }
+	int GetItemInfo(ItemInfo* p) ;
+	//burst - add these two
+	int ammoToShoot;
+	float nextBurstShoot;
 
-	void PrimaryAttack(void);
-	void SecondaryAttack(void);
-	void BurstFire(float flSpread, float flCycleTime, BOOL fUseAutoAim);
-	BOOL Deploy(void);
-	void Holster();
-	void Reload(void);
-	void WeaponIdle(void);
-	int m_fFireMode;
+	void IncrementAmmo(CBasePlayer* pPlayer);
+	void PrimaryAttack() ;
+	void ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim);
+	BOOL Deploy() ;
+	void Reload() ;
+	void WeaponIdle() ;
+
+	BOOL UseDecrement() 
+	{
+#if defined( CLIENT_WEAPONS )
+		return UTIL_DefaultUseDecrement();
+#else
+		return FALSE;
+#endif
+	}
+private:
 	int m_iShell;
-	int m_fInZoom; // don't save this
-	int BurstShots = 0;
+	unsigned short m_usFireScar1;
+	unsigned short m_usFireScar2;
 };
 LINK_ENTITY_TO_CLASS(weapon_scar, CScar);
 
@@ -72,12 +83,10 @@ void CScar::Precache(void)
 {
 	PRECACHE_MODEL("models/v_556ar.mdl");
 	PRECACHE_MODEL("models/w_556ar.mdl");
-	PRECACHE_MODEL("models/p_556ar.mdl");
 
 	m_iShell = PRECACHE_MODEL("models/556shell.mdl");// brass shell
 
 	PRECACHE_SOUND("weapons/scarfire_1.wav");//silenced scar
-	PRECACHE_SOUND("weapons/scarfire_2.wav");//silenced scar
 }
 
 int CScar::GetItemInfo(ItemInfo* p)
@@ -99,63 +108,29 @@ int CScar::GetItemInfo(ItemInfo* p)
 
 BOOL CScar::Deploy()
 {
+	ammoToShoot = 0; //burst - reset state
+
 	// pev->body = 1;
 	return DefaultDeploy("models/v_556ar.mdl", "models/p_556ar.mdl", SCAR_DEPLOY, "onehanded");
-}
-
-void CScar::Holster()
-{
-	m_fInReload = FALSE;// cancel any reload in progress.
-
-	if (m_fInZoom)
-	{
-		SecondaryAttack();
-	}
-
-	m_pPlayer->m_flNextAttack = gpGlobals->time + 0.5;
-	if (m_iClip)
-		SendWeaponAnim(SCAR_DEPLOY);
-	else
-		SendWeaponAnim(SCAR_DEPLOY);
-}
-
-void CScar::SecondaryAttack()
-{
-	if (m_fInZoom)
-	{
-		m_pPlayer->m_iFOV = 0; // 0 means reset to default fov
-		m_fInZoom = 0;
-	}
-	else
-	{
-		m_pPlayer->m_iFOV = 5;
-		m_fInZoom = 1;
-	}
-
-	pev->nextthink = gpGlobals->time + 0.1;
-	m_flNextSecondaryAttack = gpGlobals->time + 1.0;
 }
 
 
 void CScar::PrimaryAttack(void)
 {
-	BurstFire(0.04, 0.05, FALSE);
-	BurstShots = BurstShots + 1;
-	if (BurstShots >= 3)
-	{
-		BurstShots = 0;
-		BurstFire(0.04, 0.5, FALSE);
-	}
+	//burst - start shooting
+	ammoToShoot = 3;
+	m_flTimeWeaponIdle = gpGlobals->time - 0.1f;;
+	//end
 }
 
-void CScar::BurstFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
+void CScar::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 {
 	if (m_iClip <= 0)
 	{
 		if (m_fFireOnEmpty)
 		{
 			PlayEmptySound();
-			m_flNextPrimaryAttack = gpGlobals->time + 0.2;
+			m_flNextPrimaryAttack = gpGlobals->time + 0.1;
 		}
 
 		return;
@@ -165,6 +140,8 @@ void CScar::BurstFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 
 	m_pPlayer->pev->effects = (int)(m_pPlayer->pev->effects) | EF_MUZZLEFLASH;
 
+	int flags;
+
 	if (m_iClip != 0)
 		SendWeaponAnim(SCAR_SHOOT_2);
 	else
@@ -173,37 +150,18 @@ void CScar::BurstFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
-
-	Vector	vecShellVelocity = m_pPlayer->pev->velocity
-		+ gpGlobals->v_right * RANDOM_FLOAT(50, 70)
-		+ gpGlobals->v_up * RANDOM_FLOAT(100, 150)
-		+ gpGlobals->v_forward * 20;
-	EjectBrass(pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_up * -12 + gpGlobals->v_forward * 32 + gpGlobals->v_right * 6, vecShellVelocity, pev->angles.y, m_iShell, TE_BOUNCE_SHELL);
-
 	// silenced
 	if (pev->body == 1)
 	{
 		m_pPlayer->m_iWeaponVolume = QUIET_GUN_VOLUME;
 		m_pPlayer->m_iWeaponFlash = DIM_GUN_FLASH;
-
-		switch (RANDOM_LONG(0, 1))
-		{
-		case 0:
-			EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/pl_gun1.wav", RANDOM_FLOAT(0.9, 1.0), ATTN_NORM);
-			break;
-		case 1:
-			EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/pl_gun2.wav", RANDOM_FLOAT(0.9, 1.0), ATTN_NORM);
-			break;
-		}
 	}
 	else
 	{
 		// non-silenced
 		m_pPlayer->m_iWeaponVolume = NORMAL_GUN_VOLUME;
 		m_pPlayer->m_iWeaponFlash = NORMAL_GUN_FLASH;
-		EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/pl_gun1.wav", RANDOM_FLOAT(0.92, 1.0), ATTN_NORM, 0, 98 + RANDOM_LONG(0, 3));
-
+		EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/scar_fire1.wav", RANDOM_FLOAT(0.92, 1.0), ATTN_NORM, 0, 98 + RANDOM_LONG(0, 3));
 	}
 
 	Vector vecSrc = m_pPlayer->GetGunPosition();
@@ -218,45 +176,73 @@ void CScar::BurstFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 		vecAiming = gpGlobals->v_forward;
 	}
 
+	Vector vecDir;
 	m_pPlayer->FireBullets(1, vecSrc, vecAiming, Vector(flSpread, flSpread, flSpread), 8192, BULLET_PLAYER_9MM, 0);
+
+	PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), fUseAutoAim ? m_usFireScar1 : m_usFireScar2, 0.0, (float*)&g_vecZero, (float*)&g_vecZero, vecDir.x, vecDir.y, 0, 0, (m_iClip == 0) ? 1 : 0, 0);
+
 	m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->time + flCycleTime;
 
 	if (!m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
 		// HEV suit - indicate out of ammo condition
 		m_pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
 
-	m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT(10, 15);
-
-	m_pPlayer->pev->punchangle.x -= 1;
+	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat(m_pPlayer->random_seed, 10, 15);
 }
 
 
 void CScar::Reload(void)
 {
+	ammoToShoot = 0; //burst - reset state
+
 	DefaultReload(SCAR_MAX_CLIP, SCAR_RELOAD, 1.5);
 }
 
 
 void CScar::WeaponIdle(void)
 {
+
+	//burst - burst mechanism ( TODO: Move to CBasePlayerWeapon::ItemPostFrame())
+	if (nextBurstShoot < gpGlobals->time && ammoToShoot > 0)
+	{
+		float delay = 0.07f;
+
+		ScarFire(0.01, delay, FALSE);
+		nextBurstShoot = gpGlobals->time + delay;
+		m_pPlayer->pev->punchangle.x--;
+		ammoToShoot--;
+	}
+	//end
+
 	ResetEmptySound();
 
 	m_pPlayer->GetAutoaimVector(AUTOAIM_10DEGREES);
 
-	if (m_flTimeWeaponIdle > gpGlobals->time)
+	if (m_flTimeWeaponIdle > UTIL_WeaponTimeBase())
 		return;
 
 	// only idle if the slid isn't back
 	if (m_iClip != 0)
 	{
 		int iAnim;
-		float flRand = RANDOM_FLOAT(0, 1);
+		float flRand = UTIL_SharedRandomFloat(m_pPlayer->random_seed, 0.0, 1.0);
+
 		if (flRand <= 0.3 + 0 * 0.75)
 		{
 			iAnim = SCAR_IDLE1;
-			m_flTimeWeaponIdle = gpGlobals->time + 49.0 / 16;
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 49.0 / 16;
 		}
-		SendWeaponAnim(iAnim);
+		else if (flRand <= 0.6 + 0 * 0.875)
+		{
+			iAnim = SCAR_IDLE1;
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 60.0 / 16.0;
+		}
+		else
+		{
+			iAnim = SCAR_IDLE1;
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 40.0 / 16.0;
+		}
+		SendWeaponAnim(iAnim, 1);
 	}
 }
 

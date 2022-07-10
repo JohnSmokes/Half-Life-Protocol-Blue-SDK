@@ -248,6 +248,7 @@
     <ClCompile Include="tripmine.cpp" />
     <ClCompile Include="turret.cpp" />
     <ClCompile Include="util.cpp" />
+    <ClCompile Include="vgui_scope.cpp" />
     <ClCompile Include="weapons.cpp" />
     <ClCompile Include="world.cpp" />
     <ClCompile Include="xen.cpp" />
