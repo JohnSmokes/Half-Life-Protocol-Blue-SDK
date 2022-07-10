@@ -30,6 +30,7 @@
 #include "soundent.h"
 #include "decals.h"
 #include "gamerules.h"
+#include "scar.h"
 
 extern CGraph	WorldGraph;
 extern int gEvilImpulse101;
@@ -641,6 +642,20 @@ BOOL CanAttack( float attack_time, float curtime, BOOL isPredicted )
 
 void CBasePlayerWeapon::ItemPostFrame( void )
 {
+	// SCAR - custom burst feature
+	if (m_iId == WEAPON_SCAR)
+	{
+		auto wep = static_cast<CScar*>(this);
+		if (wep->nextBurstShoot < gpGlobals->time && wep->ammoToShoot > 0)
+		{
+			float delay = 0.05f;
+
+			wep->ScarFire(0.01, delay, FALSE);
+			wep->nextBurstShoot = gpGlobals->time + delay;
+			wep->ammoToShoot--;
+		}
+	}
+
 	if ((m_fInReload) && ( m_pPlayer->m_flNextAttack <= gpGlobals->time ) )
 	{
 		// complete the reload. 

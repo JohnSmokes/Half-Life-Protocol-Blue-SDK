@@ -500,5 +500,8 @@
     <ClInclude Include="barney.h">
       <Filter>Header Files\Monsters</Filter>
     </ClInclude>
+    <ClInclude Include="scar.h">
+      <Filter>Header Files\Weapons</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

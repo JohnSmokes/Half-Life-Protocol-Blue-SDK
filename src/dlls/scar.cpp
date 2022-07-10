@@ -17,9 +17,8 @@
 #include "util.h"
 #include "cbase.h"
 #include "monsters.h"
-#include "weapons.h"
 #include "nodes.h"
-#include "player.h"
+#include "scar.h"
 
 enum scar_e {
 	SCAR_LONGIDLE = 0,
@@ -31,37 +30,6 @@ enum scar_e {
 	SCAR_SHOOT_3,
 };
 
-class CScar : public CBasePlayerWeapon
-{
-public:
-	void Spawn() ;
-	void Precache() ;
-	int iItemSlot()  { return 2; }
-	int GetItemInfo(ItemInfo* p) ;
-	//burst - add these two
-	int ammoToShoot;
-	float nextBurstShoot;
-
-	void IncrementAmmo(CBasePlayer* pPlayer);
-	void PrimaryAttack() ;
-	void ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim);
-	BOOL Deploy() ;
-	void Reload() ;
-	void WeaponIdle() ;
-
-	BOOL UseDecrement() 
-	{
-#if defined( CLIENT_WEAPONS )
-		return UTIL_DefaultUseDecrement();
-#else
-		return FALSE;
-#endif
-	}
-private:
-	int m_iShell;
-	unsigned short m_usFireScar1;
-	unsigned short m_usFireScar2;
-};
 LINK_ENTITY_TO_CLASS(weapon_scar, CScar);
 
 
@@ -114,13 +82,40 @@ BOOL CScar::Deploy()
 	return DefaultDeploy("models/v_556ar.mdl", "models/p_556ar.mdl", SCAR_DEPLOY, "onehanded");
 }
 
+void CScar::Holster()
+{
+	if(m_pPlayer->m_iFOV != 0)
+		SecondaryAttack();
+
+	// use default behaviour
+	CBasePlayerWeapon::Holster();
+}
 
 void CScar::PrimaryAttack(void)
 {
 	//burst - start shooting
-	ammoToShoot = 3;
-	m_flTimeWeaponIdle = gpGlobals->time - 0.1f;;
+	if (ammoToShoot == 0)
+	{
+		ammoToShoot = 3;
+	}
 	//end
+
+	m_flNextPrimaryAttack = gpGlobals->time + 0.8f;
+}
+
+void CScar::SecondaryAttack(void)
+{
+
+	if (m_pPlayer->m_iFOV != 0)
+	{
+		m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
+	}
+	else
+	{
+		m_pPlayer->m_iFOV = 40;
+	}
+
+	m_flNextSecondaryAttack = gpGlobals->time + 0.5;
 }
 
 void CScar::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
@@ -137,6 +132,7 @@ void CScar::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	}
 
 	m_iClip--;
+	m_pPlayer->pev->punchangle.x--;
 
 	m_pPlayer->pev->effects = (int)(m_pPlayer->pev->effects) | EF_MUZZLEFLASH;
 
@@ -181,7 +177,7 @@ void CScar::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 
 	PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), fUseAutoAim ? m_usFireScar1 : m_usFireScar2, 0.0, (float*)&g_vecZero, (float*)&g_vecZero, vecDir.x, vecDir.y, 0, 0, (m_iClip == 0) ? 1 : 0, 0);
 
-	m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->time + flCycleTime;
+	//m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->time + flCycleTime;
 
 	if (!m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
 		// HEV suit - indicate out of ammo condition
@@ -195,25 +191,15 @@ void CScar::Reload(void)
 {
 	ammoToShoot = 0; //burst - reset state
 
+	if (m_pPlayer->m_iFOV != 0)
+		SecondaryAttack();
+
 	DefaultReload(SCAR_MAX_CLIP, SCAR_RELOAD, 1.5);
 }
 
 
 void CScar::WeaponIdle(void)
 {
-
-	//burst - burst mechanism ( TODO: Move to CBasePlayerWeapon::ItemPostFrame())
-	if (nextBurstShoot < gpGlobals->time && ammoToShoot > 0)
-	{
-		float delay = 0.07f;
-
-		ScarFire(0.01, delay, FALSE);
-		nextBurstShoot = gpGlobals->time + delay;
-		m_pPlayer->pev->punchangle.x--;
-		ammoToShoot--;
-	}
-	//end
-
 	ResetEmptySound();
 
 	m_pPlayer->GetAutoaimVector(AUTOAIM_10DEGREES);
