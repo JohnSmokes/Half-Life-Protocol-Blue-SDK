@@ -1077,7 +1077,7 @@ void CFuncTankGrenade::Fire(const Vector& barrelEnd, const Vector& forward, entv
 	if (m_fireLast != 0)
 	{
 		// FireBullets needs gpGlobals->v_up, etc.
-		UTIL_MakeAimVectors(pev->angles);
+		UTIL_MakeAimVectors(pevAttacker->angles);
 
 		int bulletCount = (gpGlobals->time - m_fireLast) * m_fireRate;
 		if (bulletCount > 0)
