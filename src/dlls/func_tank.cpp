@@ -1037,3 +1037,63 @@ void CFuncTankControls::Spawn( void )
 
 	CBaseEntity::Spawn();
 }
+
+//============================================================================
+// GRENADE LAUNCHER
+//============================================================================
+class CFuncTankGrenade : public CFuncTank
+{
+public:
+	void Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker);
+	void Precache();
+	void KeyValue(KeyValueData* pkvd);
+
+	char m_shootSound[1024];
+};
+LINK_ENTITY_TO_CLASS(func_tankgrenade, CFuncTankGrenade);
+
+void CFuncTankGrenade::KeyValue(KeyValueData* pkvd)
+{
+	if (FStrEq(pkvd->szKeyName, "shootsound"))
+	{
+		strcpy(m_shootSound, pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else
+		CFuncTank::KeyValue(pkvd);
+}
+
+void CFuncTankGrenade::Precache()
+{
+	// precache shooting sound
+	PRECACHE_SOUND("weapons/mk19_fire1.wav"); // mk19 fire
+	return CFuncTank::Precache();
+}
+
+void CFuncTankGrenade::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker)
+{
+	int i;
+
+	if (m_fireLast != 0)
+	{
+		// FireBullets needs gpGlobals->v_up, etc.
+		UTIL_MakeAimVectors(pev->angles);
+
+		int bulletCount = (gpGlobals->time - m_fireLast) * m_fireRate;
+		if (bulletCount > 0)
+		{
+			for (i = 0; i < bulletCount; i++)
+			{
+				CGrenade::ShootContact(pev,
+					pev->origin + gpGlobals->v_forward * 16,
+					gpGlobals->v_forward * 800);
+
+				// play this sound through BODY channel so we can hear it if player didn't stop firing MP3
+				EMIT_SOUND(ENT(pevAttacker), CHAN_WEAPON, ("weapons/mk19_fire1.wav"), 0.8, ATTN_NORM);
+			}
+			CFuncTank::Fire(barrelEnd, forward, pevAttacker);
+		}
+	}
+	else
+		CFuncTank::Fire(barrelEnd, forward, pevAttacker);
+}
