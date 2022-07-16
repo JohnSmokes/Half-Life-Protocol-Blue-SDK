@@ -1054,7 +1054,7 @@ LINK_ENTITY_TO_CLASS(func_tankgrenade, CFuncTankGrenade);
 
 void CFuncTankGrenade::KeyValue(KeyValueData* pkvd)
 {
-	if (FStrEq(pkvd->szKeyName, "shootsound"))
+	if (FStrEq(pkvd->szKeyName, "weapons/mk19_fire1.wav"))
 	{
 		strcpy(m_shootSound, pkvd->szValue);
 		pkvd->fHandled = TRUE;
