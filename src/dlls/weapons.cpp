@@ -335,8 +335,8 @@ void W_Precache(void)
 	UTIL_PrecacheOther( "ammo_9mmAR" );
 	UTIL_PrecacheOther( "ammo_ARgrenades" );
 
-	// aa12
-	UTIL_PrecacheOtherWeapon("weapon_aa12");
+	// usas12
+	UTIL_PrecacheOtherWeapon("weapon_usas");
 
 	// glock18
 	UTIL_PrecacheOtherWeapon("weapon_glock18");

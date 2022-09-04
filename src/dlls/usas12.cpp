@@ -20,7 +20,7 @@ enum usas_e {
 	USAS_IDLE1,
 	USAS_RELOAD,
 	USAS_DEPLOY,
-	USAS_SHOOT,
+	USAS_SHOOT
 };
 
 class CUSAS : public CBasePlayerWeapon
