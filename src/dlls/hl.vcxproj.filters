@@ -336,7 +336,7 @@
     <ClCompile Include="light_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="aa12.cpp">
+    <ClCompile Include="usas12.cpp">
       <Filter>Source Files\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="shotgun.cpp">

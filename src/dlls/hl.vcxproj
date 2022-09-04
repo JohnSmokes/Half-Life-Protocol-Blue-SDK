@@ -147,7 +147,7 @@
     <ClCompile Include="..\pm_shared\pm_debug.c" />
     <ClCompile Include="..\pm_shared\pm_math.c" />
     <ClCompile Include="..\pm_shared\pm_shared.c" />
-    <ClCompile Include="aa12.cpp" />
+    <ClCompile Include="usas12.cpp" />
     <ClCompile Include="aflock.cpp" />
     <ClCompile Include="agrunt.cpp" />
     <ClCompile Include="airtank.cpp" />

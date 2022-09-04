@@ -78,7 +78,7 @@ public:
 #define WEAPON_TRIPMINE			13
 #define	WEAPON_SATCHEL			14
 #define	WEAPON_SNARK			15
-#define WEAPON_AA12				16
+#define WEAPON_USAS				16
 #define WEAPON_GLOCK18			17
 #define WEAPON_SCAR				18
 #define WEAPON_FLARE			19
@@ -109,7 +109,7 @@ public:
 #define SNARK_WEIGHT		5
 #define SATCHEL_WEIGHT		-10
 #define TRIPMINE_WEIGHT		-10
-#define AA12_WEIGHT			20
+#define USAS_WEIGHT			20
 #define GLOCK18_WEIGHT		15
 #define SCAR_WEIGHT			20
 
@@ -145,7 +145,7 @@ public:
 #define SATCHEL_MAX_CLIP		WEAPON_NOCLIP
 #define TRIPMINE_MAX_CLIP		WEAPON_NOCLIP
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
-#define AA12_MAX_CLIP			12
+#define USAS_MAX_CLIP			10
 #define GLOCK18_MAX_CLIP		33
 #define SCAR_MAX_CLIP			30
 
@@ -165,7 +165,7 @@ public:
 #define TRIPMINE_DEFAULT_GIVE		1
 #define SNARK_DEFAULT_GIVE			5
 #define HIVEHAND_DEFAULT_GIVE		8
-#define AA12_DEFAULT_GIVE			8
+#define USAS_DEFAULT_GIVE			8
 #define GLOCK18_DEFAULT_GIVE		33
 #define SCAR_DEFAULT_GIVE			15
 

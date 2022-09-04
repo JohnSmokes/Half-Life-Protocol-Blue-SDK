@@ -15,17 +15,15 @@
 
 // jay - removed shotgun spreads, xash is SP only anyways
 
-enum aa12_e {
-	AA12_IDLE = 0,
-	AA12_SHOOT1,
-	AA12_SHOOT2,
-	AA12_INSERT,
-	AA12_AFTER_RELOAD,
-	AA12_START_RELOAD,
-	AA12_DRAW,
+enum usas_e {
+	USAS_LONGIDLE = 0,
+	USAS_IDLE1,
+	USAS_RELOAD,
+	USAS_DEPLOY,
+	USAS_SHOOT,
 };
 
-class CAA12 : public CBasePlayerWeapon
+class CUSAS : public CBasePlayerWeapon
 {
 public:
 	void Spawn(void);
@@ -45,24 +43,24 @@ public:
 	//float m_flPumpTime;
 	// jay - these commented out lines are unused in an AA12. they are used for the shotgun's custom reload and pump sound
 };
-LINK_ENTITY_TO_CLASS(weapon_aa12, CAA12);
+LINK_ENTITY_TO_CLASS(weapon_usas, CUSAS);
 
 
-void CAA12::Spawn()
+void CUSAS::Spawn()
 {
 	Precache();
-	m_iId = WEAPON_AA12;
+	m_iId = WEAPON_USAS;
 	SET_MODEL(ENT(pev), "models/w_autoass.mdl");
 
-	m_iDefaultAmmo = AA12_DEFAULT_GIVE;
+	m_iDefaultAmmo = USAS_DEFAULT_GIVE;
 
 	FallInit();// get ready to fall
 }
 
 
-void CAA12::Precache(void)
+void CUSAS::Precache(void)
 {
-	PRECACHE_MODEL("models/v_autoass.mdl");
+	PRECACHE_MODEL("models/v_usas.mdl");
 	PRECACHE_MODEL("models/w_autoass.mdl");
 	PRECACHE_MODEL("models/p_autoass.mdl");
 
@@ -71,8 +69,8 @@ void CAA12::Precache(void)
 	//PRECACHE_SOUND("items/9mmclip1.wav");
 	// jay - ammo pickup sound; not needed in precache
 
-	PRECACHE_SOUND("weapons/auto1.wav");// AA12 fire 1
-	PRECACHE_SOUND("weapons/auto2.wav");// AA12 fire 2 
+	PRECACHE_SOUND("weapons/usas_fire1.wav");// USAS 12 fire 1
+	PRECACHE_SOUND("weapons/auto2.wav");// USAS 12 fire 2 
 
 	PRECACHE_SOUND("weapons/clipinsert1.wav");	// AA12 reload
 	PRECACHE_SOUND("weapons/cliprelease1.wav");	// AA12 reload
@@ -83,7 +81,7 @@ void CAA12::Precache(void)
 	PRECACHE_SOUND("weapons/357_cock1.wav"); // gun empty sound
 }
 
-int CAA12::AddToPlayer(CBasePlayer* pPlayer)
+int CUSAS::AddToPlayer(CBasePlayer* pPlayer)
 {
 	if (CBasePlayerWeapon::AddToPlayer(pPlayer))
 	{
@@ -96,32 +94,32 @@ int CAA12::AddToPlayer(CBasePlayer* pPlayer)
 }
 
 
-int CAA12::GetItemInfo(ItemInfo* p)
+int CUSAS::GetItemInfo(ItemInfo* p)
 {
 	p->pszName = STRING(pev->classname);
 	p->pszAmmo1 = "buckshot";
 	p->iMaxAmmo1 = BUCKSHOT_MAX_CARRY;
 	p->pszAmmo2 = NULL;
 	p->iMaxAmmo2 = -1;
-	p->iMaxClip = AA12_MAX_CLIP;
+	p->iMaxClip = USAS_MAX_CLIP;
 	p->iSlot = 3;
 	p->iPosition = 4;
 	p->iFlags = 0;
-	p->iId = m_iId = WEAPON_AA12;
-	p->iWeight = AA12_WEIGHT;
+	p->iId = m_iId = WEAPON_USAS;
+	p->iWeight = USAS_WEIGHT;
 
 	return 1;
 }
 
 
 
-BOOL CAA12::Deploy()
+BOOL CUSAS::Deploy()
 {
-	return DefaultDeploy("models/v_autoass.mdl", "models/p_autoass.mdl", AA12_DRAW, "shotgun");	// jay - the last line here is the player animation. this should be "shotgun" here, as "aa12" doesn't exist
+	return DefaultDeploy("models/v_usas.mdl", "models/p_autoass.mdl", USAS_DEPLOY, "shotgun");	// jay - the last line here is the player animation. this should be "shotgun" here, as "aa12" doesn't exist
 }
 
 
-void CAA12::PrimaryAttack()
+void CUSAS::PrimaryAttack()
 {
 	// don't fire underwater
 	if (m_pPlayer->pev->waterlevel == 3)
@@ -145,7 +143,7 @@ void CAA12::PrimaryAttack()
 	m_iClip--;
 	m_pPlayer->pev->effects = (int)(m_pPlayer->pev->effects) | EF_MUZZLEFLASH;
 
-	SendWeaponAnim(AA12_SHOOT1);
+	SendWeaponAnim(USAS_SHOOT);
 
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
@@ -159,7 +157,7 @@ void CAA12::PrimaryAttack()
 
 	EjectBrass(m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_up * -12 + gpGlobals->v_forward * 20 + gpGlobals->v_right * 4, vecShellVelocity, pev->angles.y, m_iShell, TE_BOUNCE_SHOTSHELL);
 
-	EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/auto1.wav", RANDOM_FLOAT(0.95, 1.0), ATTN_NORM, 0, 93 + RANDOM_LONG(0, 0x1f));
+	EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/usas_fire1.wav", RANDOM_FLOAT(0.95, 1.0), ATTN_NORM, 0, 93 + RANDOM_LONG(0, 0x1f));
 
 
 	Vector vecSrc = m_pPlayer->GetGunPosition();
@@ -203,14 +201,14 @@ void CAA12::PrimaryAttack()
 }
 
 
-void CAA12::Reload(void)
+void CUSAS::Reload(void)
 {
-	DefaultReload(AA12_MAX_CLIP, AA12_START_RELOAD, 1.5);
+	DefaultReload(USAS_MAX_CLIP, USAS_RELOAD, 1.5);
 }
 
 
 
-void CAA12::WeaponIdle(void)
+void CUSAS::WeaponIdle(void)
 {
 	ResetEmptySound();
 
@@ -234,7 +232,7 @@ void CAA12::WeaponIdle(void)
 	// also, this RANDOM_LONG can return either 0 or 1, and this only has a case for 0. this means that 50% of the time the idle animation will be empty and broken
 
 	// fixed:
-	SendWeaponAnim(AA12_IDLE);
+	SendWeaponAnim(USAS_IDLE1);
 
 	m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT(10, 15);// how long till we do this again.
 }
