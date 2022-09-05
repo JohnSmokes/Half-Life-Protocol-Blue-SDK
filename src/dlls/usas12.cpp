@@ -50,7 +50,7 @@ void CUSAS::Spawn()
 {
 	Precache();
 	m_iId = WEAPON_USAS;
-	SET_MODEL(ENT(pev), "models/w_autoass.mdl");
+	SET_MODEL(ENT(pev), "models/w_usas.mdl");
 
 	m_iDefaultAmmo = USAS_DEFAULT_GIVE;
 
@@ -61,7 +61,7 @@ void CUSAS::Spawn()
 void CUSAS::Precache(void)
 {
 	PRECACHE_MODEL("models/v_usas.mdl");
-	PRECACHE_MODEL("models/w_autoass.mdl");
+	PRECACHE_MODEL("models/w_usas.mdl");
 	PRECACHE_MODEL("models/p_autoass.mdl");
 
 	m_iShell = PRECACHE_MODEL("models/shotgunshell.mdl");// shotgun shell
@@ -197,7 +197,7 @@ void CUSAS::PrimaryAttack()
 	//m_fInReload = 0;
 	// jay - unused shotgun variable
 
-	m_pPlayer->pev->punchangle.x -= 1;
+	m_pPlayer->pev->punchangle.x -= 2;
 }
 
 
@@ -217,22 +217,20 @@ void CUSAS::WeaponIdle(void)
 	if (m_flTimeWeaponIdle > gpGlobals->time)
 		return;
 
-	/*
-		int iAnim;
-		switch (RANDOM_LONG(0, 1))
-		{
-		case 0:
-			iAnim = AA12_IDLE;
-			break;
-		}
+	int iAnim;
+	switch (RANDOM_LONG(0, 1))
+	{
+	case 0:
+		iAnim = USAS_LONGIDLE;
+		break;
 
-		SendWeaponAnim(iAnim);
-	*/
-	// jay - if there's only one idle animation, there's no point in declaring a random switch or even using the iAnim variable
-	// also, this RANDOM_LONG can return either 0 or 1, and this only has a case for 0. this means that 50% of the time the idle animation will be empty and broken
+	default:
+	case 1:
+		iAnim = USAS_IDLE1;
+		break;
+	}
 
-	// fixed:
-	SendWeaponAnim(USAS_IDLE1);
+	SendWeaponAnim(iAnim);
 
 	m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT(10, 15);// how long till we do this again.
 }
