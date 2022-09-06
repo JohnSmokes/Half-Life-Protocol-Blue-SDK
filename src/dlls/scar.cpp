@@ -79,7 +79,7 @@ BOOL CScar::Deploy()
 	ammoToShoot = 0; //burst - reset state
 
 	// pev->body = 1;
-	return DefaultDeploy("models/v_556ar.mdl", "models/p_556ar.mdl", SCAR_DEPLOY, "onehanded");
+	return DefaultDeploy("models/v_556ar.mdl", "models/p_9mmAR.mdl", SCAR_DEPLOY, "onehanded");
 }
 
 void CScar::Holster()

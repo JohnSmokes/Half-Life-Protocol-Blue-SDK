@@ -62,7 +62,7 @@ void CUSAS::Precache(void)
 {
 	PRECACHE_MODEL("models/v_usas.mdl");
 	PRECACHE_MODEL("models/w_usas.mdl");
-	PRECACHE_MODEL("models/p_autoass.mdl");
+	PRECACHE_MODEL("models/p_9mmAR.mdl");
 
 	m_iShell = PRECACHE_MODEL("models/shotgunshell.mdl");// shotgun shell
 
