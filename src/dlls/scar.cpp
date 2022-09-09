@@ -11,6 +11,10 @@
 *   Valve LLC.  All other use, distribution, or modification is prohibited
 *   without written permission from Valve LLC.
 *
+* 
+* ----------------------------------------------------------------------------------------------------------------
+* Half-Life: Another Shift SCAR DMR Code - by https://www.moddb.com/members/johncalhoun & Baconstu
+* ----------------------------------------------------------------------------------------------------------------
 ****/
 
 #include "extdll.h"

@@ -1,7 +1,7 @@
 /***
-* Weapon code written by: https://www.moddb.com/members/johncalhoun
-* 
-* Additional fixes and lines written by: https://github.com/JackBailey
+* ----------------------------------------------------------------------------------------------------------------
+* Half-Life: Another Shift USAS12 Code - by https://www.moddb.com/members/johncalhoun
+* ----------------------------------------------------------------------------------------------------------------
 ****/
 
 #include "extdll.h"
