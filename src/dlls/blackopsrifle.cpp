@@ -83,7 +83,7 @@ BOOL CStealth::Deploy()
 	ammoToShoot = 0; //burst - reset state
 
 	// pev->body = 1;
-	return DefaultDeploy("models/v_556ar.mdl", "models/p_9mmAR.mdl", STEALTH_DEPLOY, "onehanded");
+	return DefaultDeploy("models/v_brifle.mdl", "models/p_brifle.mdl", STEALTH_DEPLOY, "onehanded");
 }
 
 void CStealth::Holster()

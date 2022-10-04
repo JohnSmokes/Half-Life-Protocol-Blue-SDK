@@ -1,7 +1,7 @@
 #include "weapons.h"
 #include "player.h"
 
-class CScar : public CBasePlayerWeapon
+class CStealth : public CBasePlayerWeapon
 {
 public:
 	void Spawn();

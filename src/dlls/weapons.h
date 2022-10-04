@@ -111,7 +111,7 @@ public:
 #define TRIPMINE_WEIGHT		-10
 #define USAS_WEIGHT			20
 #define GLOCK18_WEIGHT		15
-#define STEALTH_WEIGHT			20
+#define STEALTH_WEIGHT		20
 
 // weapon clip/carry ammo capacities
 #define URANIUM_MAX_CARRY		100
@@ -147,7 +147,7 @@ public:
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
 #define USAS_MAX_CLIP			10
 #define GLOCK18_MAX_CLIP		33
-#define SCAR_STEALTH_CLIP		30
+#define STEALTH_MAX_CLIP		30
 
 // the default amount of ammo that comes with each gun when it spawns
 #define GLOCK_DEFAULT_GIVE			17
