@@ -178,7 +178,7 @@
     <ClCompile Include="flyingmonster.cpp" />
     <ClCompile Include="func_break.cpp" />
     <ClCompile Include="func_tank.cpp" />
-    <ClCompile Include="scar.cpp" />
+    <ClCompile Include="blackopsrifle.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gamerules.cpp" />
     <ClCompile Include="gargantua.cpp" />
