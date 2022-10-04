@@ -24,69 +24,69 @@
 #include "nodes.h"
 #include "scar.h"
 
-enum scar_e {
-	SCAR_LONGIDLE = 0,
-	SCAR_IDLE1,
-	SCAR_RELOAD,
-	SCAR_DEPLOY,
-	SCAR_SHOOT_1,
-	SCAR_SHOOT_2,
-	SCAR_SHOOT_3,
+enum stealth_e {
+	STEALTH_LONGIDLE = 0,
+	STEALTH_IDLE1,
+	STEALTH_RELOAD,
+	STEALTH_DEPLOY,
+	STEALTH_SHOOT_1,
+	STEALTH_SHOOT_2,
+	STEALTH_SHOOT_3,
 };
 
-LINK_ENTITY_TO_CLASS(weapon_scar, CScar);
+LINK_ENTITY_TO_CLASS(weapon_stealth, CStealth);
 
 
-
-void CScar::Spawn()
+void CStealth::Spawn()
 {
-	pev->classname = MAKE_STRING("weapon_scar"); // hack to allow for old names
+	pev->classname = MAKE_STRING("weapon_stealth"); // hack to allow for old names
 	Precache();
-	m_iId = WEAPON_SCAR;
-	SET_MODEL(ENT(pev), "models/w_556ar.mdl");
+	m_iId = WEAPON_STEALTH;
+	SET_MODEL(ENT(pev), "models/w_brifle.mdl");
 
-	m_iDefaultAmmo = SCAR_DEFAULT_GIVE;
+	m_iDefaultAmmo = STEALTH_DEFAULT_GIVE;
 
 	FallInit();// get ready to fall down.
 }
 
 
-void CScar::Precache(void)
+void CStealth::Precache(void)
 {
-	PRECACHE_MODEL("models/v_556ar.mdl");
-	PRECACHE_MODEL("models/w_556ar.mdl");
+	PRECACHE_MODEL("models/v_brifle.mdl");
+	PRECACHE_MODEL("models/w_brifle.mdl");
+	PRECACHE_MODEL("models/p_brifle.mdl");
 
 	m_iShell = PRECACHE_MODEL("models/556shell.mdl");// brass shell
 
-	PRECACHE_SOUND("weapons/scarfire_1.wav");//silenced scar
+	PRECACHE_SOUND("weapons/briflefire_1.wav");//silenced scar
 }
 
-int CScar::GetItemInfo(ItemInfo* p)
+int CStealth::GetItemInfo(ItemInfo* p)
 {
 	p->pszName = STRING(pev->classname);
 	p->pszAmmo1 = "9mm";
 	p->iMaxAmmo1 = _9MM_MAX_CARRY;
 	p->pszAmmo2 = NULL;
 	p->iMaxAmmo2 = -1;
-	p->iMaxClip = SCAR_MAX_CLIP;
+	p->iMaxClip = STEALTH_MAX_CLIP;
 	p->iSlot = 2;
 	p->iPosition = 3;
 	p->iFlags = 0;
-	p->iId = m_iId = WEAPON_SCAR;
-	p->iWeight = SCAR_WEIGHT;
+	p->iId = m_iId = WEAPON_STEALTH;
+	p->iWeight = STEALTH_WEIGHT;
 
 	return 1;
 }
 
-BOOL CScar::Deploy()
+BOOL CStealth::Deploy()
 {
 	ammoToShoot = 0; //burst - reset state
 
 	// pev->body = 1;
-	return DefaultDeploy("models/v_556ar.mdl", "models/p_9mmAR.mdl", SCAR_DEPLOY, "onehanded");
+	return DefaultDeploy("models/v_556ar.mdl", "models/p_9mmAR.mdl", STEALTH_DEPLOY, "onehanded");
 }
 
-void CScar::Holster()
+void CStealth::Holster()
 {
 	if(m_pPlayer->m_iFOV != 0)
 		SecondaryAttack();
@@ -95,7 +95,7 @@ void CScar::Holster()
 	CBasePlayerWeapon::Holster();
 }
 
-void CScar::PrimaryAttack(void)
+void CStealth::PrimaryAttack(void)
 {
 	//burst - start shooting
 	if (ammoToShoot == 0)
@@ -107,7 +107,7 @@ void CScar::PrimaryAttack(void)
 	m_flNextPrimaryAttack = gpGlobals->time + 0.8f;
 }
 
-void CScar::SecondaryAttack(void)
+void CStealth::SecondaryAttack(void)
 {
 
 	if (m_pPlayer->m_iFOV != 0)
@@ -122,7 +122,7 @@ void CScar::SecondaryAttack(void)
 	m_flNextSecondaryAttack = gpGlobals->time + 0.5;
 }
 
-void CScar::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
+void CStealth::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 {
 	if (m_iClip <= 0)
 	{
@@ -143,9 +143,9 @@ void CScar::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	int flags;
 
 	if (m_iClip != 0)
-		SendWeaponAnim(SCAR_SHOOT_2);
+		SendWeaponAnim(STEALTH_SHOOT_2);
 	else
-		SendWeaponAnim(SCAR_SHOOT_2);
+		SendWeaponAnim(STEALTH_SHOOT_3);
 
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
@@ -161,7 +161,7 @@ void CScar::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 		// non-silenced
 		m_pPlayer->m_iWeaponVolume = NORMAL_GUN_VOLUME;
 		m_pPlayer->m_iWeaponFlash = NORMAL_GUN_FLASH;
-		EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/scar_fire1.wav", RANDOM_FLOAT(0.92, 1.0), ATTN_NORM, 0, 98 + RANDOM_LONG(0, 3));
+		EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/briflefire1.wav", RANDOM_FLOAT(0.92, 1.0), ATTN_NORM, 0, 98 + RANDOM_LONG(0, 3));
 	}
 
 	Vector vecSrc = m_pPlayer->GetGunPosition();
@@ -191,18 +191,18 @@ void CScar::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 }
 
 
-void CScar::Reload(void)
+void CStealth::Reload(void)
 {
 	ammoToShoot = 0; //burst - reset state
 
 	if (m_pPlayer->m_iFOV != 0)
 		SecondaryAttack();
 
-	DefaultReload(SCAR_MAX_CLIP, SCAR_RELOAD, 1.5);
+	DefaultReload(STEALTH_MAX_CLIP, STEALTH_RELOAD, 1.5);
 }
 
 
-void CScar::WeaponIdle(void)
+void CStealth::WeaponIdle(void)
 {
 	ResetEmptySound();
 
@@ -219,17 +219,17 @@ void CScar::WeaponIdle(void)
 
 		if (flRand <= 0.3 + 0 * 0.75)
 		{
-			iAnim = SCAR_IDLE1;
+			iAnim = STEALTH_LONGIDLE;
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 49.0 / 16;
 		}
 		else if (flRand <= 0.6 + 0 * 0.875)
 		{
-			iAnim = SCAR_IDLE1;
+			iAnim = STEALTH_IDLE1;
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 60.0 / 16.0;
 		}
 		else
 		{
-			iAnim = SCAR_IDLE1;
+			iAnim = STEALTH_IDLE1;
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 40.0 / 16.0;
 		}
 		SendWeaponAnim(iAnim, 1);

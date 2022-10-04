@@ -80,7 +80,7 @@ public:
 #define	WEAPON_SNARK			15
 #define WEAPON_USAS				16
 #define WEAPON_GLOCK18			17
-#define WEAPON_SCAR				18
+#define WEAPON_STEALTH			18
 #define WEAPON_FLARE			19
 
 
@@ -111,7 +111,7 @@ public:
 #define TRIPMINE_WEIGHT		-10
 #define USAS_WEIGHT			20
 #define GLOCK18_WEIGHT		15
-#define SCAR_WEIGHT			20
+#define STEALTH_WEIGHT			20
 
 // weapon clip/carry ammo capacities
 #define URANIUM_MAX_CARRY		100
@@ -147,7 +147,7 @@ public:
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
 #define USAS_MAX_CLIP			10
 #define GLOCK18_MAX_CLIP		33
-#define SCAR_MAX_CLIP			30
+#define SCAR_STEALTH_CLIP		30
 
 // the default amount of ammo that comes with each gun when it spawns
 #define GLOCK_DEFAULT_GIVE			17
@@ -167,7 +167,7 @@ public:
 #define HIVEHAND_DEFAULT_GIVE		8
 #define USAS_DEFAULT_GIVE			8
 #define GLOCK18_DEFAULT_GIVE		33
-#define SCAR_DEFAULT_GIVE			15
+#define STEALTH_DEFAULT_GIVE		15
 
 
 // The amount of ammo given to a player by an ammo item.

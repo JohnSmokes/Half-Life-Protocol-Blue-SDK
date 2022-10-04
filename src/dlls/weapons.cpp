@@ -342,7 +342,7 @@ void W_Precache(void)
 	UTIL_PrecacheOtherWeapon("weapon_glock18");
 
 	// scar
-	UTIL_PrecacheOtherWeapon("weapon_scar");
+	UTIL_PrecacheOtherWeapon("weapon_stealth");
 
 	// flare
 	UTIL_PrecacheOtherWeapon("weapon_flare");
@@ -643,9 +643,9 @@ BOOL CanAttack( float attack_time, float curtime, BOOL isPredicted )
 void CBasePlayerWeapon::ItemPostFrame( void )
 {
 	// SCAR - custom burst feature
-	if (m_iId == WEAPON_SCAR)
+	if (m_iId == WEAPON_STEALTH)
 	{
-		auto wep = static_cast<CScar*>(this);
+		auto wep = static_cast<CStealth*>(this);
 		if (wep->nextBurstShoot < gpGlobals->time && wep->ammoToShoot > 0)
 		{
 			float delay = 0.05f;
