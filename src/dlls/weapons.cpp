@@ -177,6 +177,7 @@ void DecalGunshot( TraceResult *pTrace, int iBulletType )
 		case BULLET_PLAYER_MP5:
 		case BULLET_MONSTER_MP5:
 		case BULLET_PLAYER_BUCKSHOT:
+		case BULLET_PLAYER_762:
 		case BULLET_PLAYER_357:
 		default:
 			// smoke and decal
@@ -343,6 +344,7 @@ void W_Precache(void)
 
 	// scar
 	UTIL_PrecacheOtherWeapon("weapon_stealth");
+	UTIL_PrecacheOther("ammo_762");
 
 	// flare
 	UTIL_PrecacheOtherWeapon("weapon_flare");

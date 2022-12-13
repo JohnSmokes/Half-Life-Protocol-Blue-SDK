@@ -319,6 +319,11 @@ cvar_t	sk_plr_buckshot1 = {"sk_plr_buckshot1","0"};
 cvar_t	sk_plr_buckshot2 = {"sk_plr_buckshot2","0"};
 cvar_t	sk_plr_buckshot3 = {"sk_plr_buckshot3","0"};
 
+// Sniper & and SCAR SSR
+cvar_t	sk_plr_762_bullet1 = { "sk_plr_762_bullet1","0" };
+cvar_t	sk_plr_762_bullet2 = { "sk_plr_762_bullet2","0" };
+cvar_t	sk_plr_762_bullet3 = { "sk_plr_762_bullet3","0" };
+
 
 // Crossbow
 cvar_t	sk_plr_xbow_bolt_client1 = {"sk_plr_xbow_bolt_client1","0"};
@@ -760,6 +765,13 @@ void GameDLLInit( void )
 	CVAR_REGISTER ( &sk_plr_buckshot1 );// {"sk_plr_buckshot1","0"};
 	CVAR_REGISTER ( &sk_plr_buckshot2 );// {"sk_plr_buckshot2","0"};
 	CVAR_REGISTER ( &sk_plr_buckshot3 );// {"sk_plr_buckshot3","0"};
+
+	// Sniper & SCAR SSR
+	CVAR_REGISTER(&sk_plr_762_bullet1);// {"sk_plr_buckshot1","0"};
+	CVAR_REGISTER(&sk_plr_762_bullet2);// {"sk_plr_buckshot2","0"};
+	CVAR_REGISTER(&sk_plr_762_bullet3);// {"sk_plr_buckshot3","0"};
+
+
 
 
 	// Crossbow

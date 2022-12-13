@@ -126,6 +126,7 @@ public:
 #define SNARK_MAX_CARRY			15
 #define HORNET_MAX_CARRY		8
 #define M203_GRENADE_MAX_CARRY	10
+#define STEALTH_MAX_CARRY		48
 
 // the maximum amount of ammo each weapon's clip can hold
 #define WEAPON_NOCLIP			-1
@@ -147,7 +148,7 @@ public:
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
 #define USAS_MAX_CLIP			10
 #define GLOCK18_MAX_CLIP		33
-#define STEALTH_MAX_CLIP		30
+#define STEALTH_MAX_CLIP		12
 
 // the default amount of ammo that comes with each gun when it spawns
 #define GLOCK_DEFAULT_GIVE			17
@@ -167,7 +168,7 @@ public:
 #define HIVEHAND_DEFAULT_GIVE		8
 #define USAS_DEFAULT_GIVE			8
 #define GLOCK18_DEFAULT_GIVE		33
-#define STEALTH_DEFAULT_GIVE		15
+#define STEALTH_DEFAULT_GIVE		12
 
 
 // The amount of ammo given to a player by an ammo item.
@@ -182,6 +183,7 @@ public:
 #define AMMO_RPGCLIP_GIVE		RPG_MAX_CLIP
 #define AMMO_URANIUMBOX_GIVE	20
 #define AMMO_SNARKBOX_GIVE		5
+#define AMMO_762BOX_GIVE		24
 
 // bullet types
 typedef	enum
@@ -191,6 +193,7 @@ typedef	enum
 	BULLET_PLAYER_MP5, // mp5
 	BULLET_PLAYER_357, // python
 	BULLET_PLAYER_BUCKSHOT, // shotgun
+	BULLET_PLAYER_762, // scar ssr/sniper 
 	BULLET_PLAYER_CROWBAR, // crowbar swipe
 
 	BULLET_MONSTER_9MM,

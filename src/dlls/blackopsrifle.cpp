@@ -58,14 +58,14 @@ void CStealth::Precache(void)
 
 	m_iShell = PRECACHE_MODEL("models/556shell.mdl");// brass shell
 
-	PRECACHE_SOUND("weapons/briflefire_1.wav");//silenced scar
+	PRECACHE_SOUND("weapons/ssr_fire1.wav");//silenced scar
 }
 
 int CStealth::GetItemInfo(ItemInfo* p)
 {
 	p->pszName = STRING(pev->classname);
-	p->pszAmmo1 = "9mm";
-	p->iMaxAmmo1 = _9MM_MAX_CARRY;
+	p->pszAmmo1 = "762";
+	p->iMaxAmmo1 = STEALTH_MAX_CARRY;
 	p->pszAmmo2 = NULL;
 	p->iMaxAmmo2 = -1;
 	p->iMaxClip = STEALTH_MAX_CLIP;
@@ -161,7 +161,7 @@ void CStealth::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 		// non-silenced
 		m_pPlayer->m_iWeaponVolume = NORMAL_GUN_VOLUME;
 		m_pPlayer->m_iWeaponFlash = NORMAL_GUN_FLASH;
-		EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/briflefire1.wav", RANDOM_FLOAT(0.92, 1.0), ATTN_NORM, 0, 98 + RANDOM_LONG(0, 3));
+		EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/ssr_fire1.wav", RANDOM_FLOAT(0.92, 1.0), ATTN_NORM, 0, 98 + RANDOM_LONG(0, 3));
 	}
 
 	Vector vecSrc = m_pPlayer->GetGunPosition();
@@ -177,7 +177,7 @@ void CStealth::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	}
 
 	Vector vecDir;
-	m_pPlayer->FireBullets(1, vecSrc, vecAiming, Vector(flSpread, flSpread, flSpread), 8192, BULLET_PLAYER_9MM, 0);
+	m_pPlayer->FireBullets(1, vecSrc, vecAiming, Vector(flSpread, flSpread, flSpread), 8192, BULLET_PLAYER_762, 0);
 
 	PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), fUseAutoAim ? m_usFireScar1 : m_usFireScar2, 0.0, (float*)&g_vecZero, (float*)&g_vecZero, vecDir.x, vecDir.y, 0, 0, (m_iClip == 0) ? 1 : 0, 0);
 
@@ -235,6 +235,31 @@ void CStealth::WeaponIdle(void)
 		SendWeaponAnim(iAnim, 1);
 	}
 }
+
+class CStealthAmmo : public CBasePlayerAmmo
+{
+	void Spawn(void)
+	{
+		Precache();
+		SET_MODEL(ENT(pev), "models/w_762ammo.mdl");
+		CBasePlayerAmmo::Spawn();
+	}
+	void Precache(void)
+	{
+		PRECACHE_MODEL("models/w_762ammo.mdl");
+		PRECACHE_SOUND("items/9mmclip1.wav");
+	}
+	BOOL AddAmmo(CBaseEntity* pOther)
+	{
+		if (pOther->GiveAmmo(AMMO_762BOX_GIVE, "762", STEALTH_MAX_CARRY) != -1)
+		{
+			EMIT_SOUND(ENT(pev), CHAN_ITEM, "items/9mmclip1.wav", 1, ATTN_NORM);
+			return TRUE;
+		}
+		return FALSE;
+	}
+};
+LINK_ENTITY_TO_CLASS(ammo_762, CStealthAmmo);
 
 
 
