@@ -41,7 +41,7 @@ void CPropPhysics::Spawn()
 
 	SET_MODEL(ENT(pev), PROPMODEL);
 	//UTIL_SetSize(pev, Vector(-8, -8, 0), Vector(8, 8, 16));
-	UTIL_SetSize(pev, Vector(-26, -26, -26), Vector(26, 26, 26));
+	UTIL_SetSize(pev, Vector(-25, -20, 0), Vector(25, 0, 50));
 
 	pev->movetype = MOVETYPE_BOUNCE;
 	pev->solid = SOLID_BBOX;
@@ -207,8 +207,8 @@ void CPropPhysics::Killed(entvars_t* pevAttacker, int iGib)
 	WRITE_COORD(Center().z);
 
 	// size
-	WRITE_COORD(pev->size.x);
-	WRITE_COORD(pev->size.y);
+	WRITE_COORD(pev->size.x); 
+	WRITE_COORD(pev->size.y); 
 	WRITE_COORD(pev->size.z);
 
 	// velocity

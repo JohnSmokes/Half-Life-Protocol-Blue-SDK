@@ -191,7 +191,7 @@ int gmsgStatusValue = 0;
 int gmsgAddELight = 0;
 int gmsgCheckFlash = 0;
 int gmsgRenderFire = 0;
-
+int gmsgZoom = 0;
 
 void LinkUserMessages( void )
 {
@@ -241,6 +241,7 @@ void LinkUserMessages( void )
 	gmsgAddELight = REG_USER_MSG("AddELight", -1); //magic nipples - elights
 	gmsgCheckFlash = REG_USER_MSG("CheckFlash", -1); //bacontsu - send info to client if we have flashlight
 	gmsgRenderFire = REG_USER_MSG("RenderFire", -1); // bacontsu - clientside burning effect
+	gmsgZoom = REG_USER_MSG("ZoomHud", 1); // baconstu - scope zoom
 }
 
 LINK_ENTITY_TO_CLASS( player, CBasePlayer );
@@ -3825,10 +3826,14 @@ void CBasePlayer :: UpdateClientData( void )
 		m_iClientHideHUD = m_iHideHUD;
 	}
 
-	if ( m_iFOV != m_iClientFOV )
+	if (m_iFOV != m_iClientFOV)
 	{
-		MESSAGE_BEGIN( MSG_ONE, gmsgSetFOV, NULL, pev );
-			WRITE_BYTE( m_iFOV );
+		MESSAGE_BEGIN(MSG_ONE, gmsgSetFOV, NULL, pev);
+		WRITE_BYTE(m_iFOV);
+		MESSAGE_END();
+
+		MESSAGE_BEGIN(MSG_ONE, gmsgZoom, NULL, pev);
+		WRITE_BYTE(0);
 		MESSAGE_END();
 
 		// cache FOV change at end of function, so weapon updates can see that FOV has changed
@@ -4006,6 +4011,13 @@ void CBasePlayer :: UpdateClientData( void )
 	{
 		if ( m_rgpPlayerItems[i] )  // each item updates it's successors
 			m_rgpPlayerItems[i]->UpdateClientData( this );
+	}
+
+	if (m_iFOV != 0 && m_iFOV != 40)
+	{
+		MESSAGE_BEGIN(MSG_ONE, gmsgZoom, NULL, pev);
+		WRITE_BYTE(1);
+		MESSAGE_END();
 	}
 
 	// Cache and client weapon change

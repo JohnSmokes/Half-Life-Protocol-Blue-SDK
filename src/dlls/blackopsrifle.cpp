@@ -29,9 +29,7 @@ enum stealth_e {
 	STEALTH_IDLE1,
 	STEALTH_RELOAD,
 	STEALTH_DEPLOY,
-	STEALTH_SHOOT_1,
-	STEALTH_SHOOT_2,
-	STEALTH_SHOOT_3,
+	STEALTH_SHOOT
 };
 
 LINK_ENTITY_TO_CLASS(weapon_stealth, CStealth);
@@ -42,7 +40,7 @@ void CStealth::Spawn()
 	pev->classname = MAKE_STRING("weapon_stealth"); // hack to allow for old names
 	Precache();
 	m_iId = WEAPON_STEALTH;
-	SET_MODEL(ENT(pev), "models/w_brifle.mdl");
+	SET_MODEL(ENT(pev), "models/w_ssr.mdl");
 
 	m_iDefaultAmmo = STEALTH_DEFAULT_GIVE;
 
@@ -52,13 +50,16 @@ void CStealth::Spawn()
 
 void CStealth::Precache(void)
 {
-	PRECACHE_MODEL("models/v_brifle.mdl");
-	PRECACHE_MODEL("models/w_brifle.mdl");
+	PRECACHE_MODEL("models/v_ssr.mdl");
+	PRECACHE_MODEL("models/w_ssr.mdl");
 	PRECACHE_MODEL("models/p_brifle.mdl");
 
 	m_iShell = PRECACHE_MODEL("models/556shell.mdl");// brass shell
 
 	PRECACHE_SOUND("weapons/ssr_fire1.wav");//silenced scar
+	PRECACHE_SOUND("weapons/sniper_zoom.wav");
+	PRECACHE_SOUND("weapons/sniper_miss.wav");
+
 }
 
 int CStealth::GetItemInfo(ItemInfo* p)
@@ -83,7 +84,7 @@ BOOL CStealth::Deploy()
 	ammoToShoot = 0; //burst - reset state
 
 	// pev->body = 1;
-	return DefaultDeploy("models/v_brifle.mdl", "models/p_brifle.mdl", STEALTH_DEPLOY, "onehanded");
+	return DefaultDeploy("models/v_ssr.mdl", "models/p_brifle.mdl", STEALTH_DEPLOY, "onehanded");
 }
 
 void CStealth::Holster()
@@ -109,16 +110,15 @@ void CStealth::PrimaryAttack(void)
 
 void CStealth::SecondaryAttack(void)
 {
-
 	if (m_pPlayer->m_iFOV != 0)
 	{
 		m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
 	}
 	else
 	{
-		m_pPlayer->m_iFOV = 40;
+		m_pPlayer->m_iFOV = 50;
 	}
-
+	EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/sniper_zoom.wav", RANDOM_FLOAT(0.92, 1.0), ATTN_NORM, 0, 98 + RANDOM_LONG(0, 3));
 	m_flNextSecondaryAttack = gpGlobals->time + 0.5;
 }
 
@@ -143,9 +143,9 @@ void CStealth::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	int flags;
 
 	if (m_iClip != 0)
-		SendWeaponAnim(STEALTH_SHOOT_2);
+		SendWeaponAnim(STEALTH_SHOOT);
 	else
-		SendWeaponAnim(STEALTH_SHOOT_3);
+		SendWeaponAnim(STEALTH_SHOOT);
 
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);

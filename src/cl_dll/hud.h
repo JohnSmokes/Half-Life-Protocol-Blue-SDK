@@ -85,6 +85,21 @@ struct HUDLIST {
 	HUDLIST* pNext;
 };
 
+class CHudZoom : public CHudBase
+{
+public:
+	int Init(void);
+	int VidInit(void);
+	int Draw(float flTime);
+	int MsgFunc_ZoomHUD(const char* pszName, int iSize, void* pbuf);
+	int m_iHudMode;
+private:
+	HLSPRITE m_hBottom_Left;
+	HLSPRITE m_hBottom_Right;
+	HLSPRITE m_hTop_Left;
+	HLSPRITE m_hTop_Right;
+	HLSPRITE m_hBlack;
+};
 
 
 //
@@ -629,6 +644,7 @@ public:
 	CHudAmmoSecondary	m_AmmoSecondary;
 	CHudTextMessage m_TextMessage;
 	CHudStatusIcons m_StatusIcons;
+	CHudZoom		m_Zoom;
 
 	void Init(void);
 	void VidInit(void);
