@@ -15,6 +15,14 @@
 
 #include "barney.h"
 
+
+//=========================================================
+// Otis heads 
+//=========================================================
+
+#define		NUM_OTIS_HEADS		3 // two heads available for otis model
+enum { HEAD_NOHELM = 0, HEAD_NOHELM2 = 1, HEAD_HELM = 2, };
+
 //=========================================================
 // Monster's Anim Events Go Here
 //=========================================================
@@ -371,6 +379,12 @@ void COtis::Spawn()
 	pev->view_ofs = Vector(0, 0, 50);// position of the eyes relative to monster's origin.
 	m_flFieldOfView = VIEW_FIELD_WIDE; // NOTE: we need a wide field of view so npc will notice player and say hello
 	m_MonsterState = MONSTERSTATE_NONE;
+
+	// Otis Heads
+	if (pev->body == -1)
+	{// -1 chooses a random head
+		pev->body = RANDOM_LONG(2, NUM_OTIS_HEADS - 1);// pick a head, any head
+	}
 
 	// gun in holster
 	pev->body = OTIS_BODY_GUNHOLSTERED;

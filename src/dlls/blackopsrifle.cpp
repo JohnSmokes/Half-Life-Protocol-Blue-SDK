@@ -13,7 +13,7 @@
 *
 * 
 * ----------------------------------------------------------------------------------------------------------------
-* Half-Life: Another Shift SCAR DMR Code - by https://www.moddb.com/members/johncalhoun & Baconstu
+* Half-Life: Another Shift SCAR DMR Code - by https://www.moddb.com/members/johncalhoun & Baconstu 
 * ----------------------------------------------------------------------------------------------------------------
 ****/
 
@@ -113,11 +113,14 @@ void CStealth::SecondaryAttack(void)
 	if (m_pPlayer->m_iFOV != 0)
 	{
 		m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
+		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_ssr.mdl");
 	}
 	else
 	{
-		m_pPlayer->m_iFOV = 50;
+		m_pPlayer->m_iFOV = 30;
+		m_pPlayer->pev->viewmodel = NULL;
 	}
+
 	EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/sniper_zoom.wav", RANDOM_FLOAT(0.92, 1.0), ATTN_NORM, 0, 98 + RANDOM_LONG(0, 3));
 	m_flNextSecondaryAttack = gpGlobals->time + 0.5;
 }
@@ -228,10 +231,6 @@ void CStealth::WeaponIdle(void)
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 60.0 / 16.0;
 		}
 		else
-		{
-			iAnim = STEALTH_IDLE1;
-			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 40.0 / 16.0;
-		}
 		SendWeaponAnim(iAnim, 1);
 	}
 }

@@ -504,12 +504,12 @@ void CCrossbow::SecondaryAttack()
 	if (m_fInZoom)
 	{
 		m_pPlayer->m_iFOV = 0; // 0 means reset to default fov
-		m_fInZoom = 0;
+		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_crossbow.mdl");
 	}
 	else
 	{
 		m_pPlayer->m_iFOV = 20;
-		m_fInZoom = 1;
+		m_pPlayer->pev->viewmodel = NULL;
 	}
 	
 	pev->nextthink = gpGlobals->time + 0.1;
