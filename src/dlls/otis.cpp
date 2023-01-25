@@ -13,15 +13,34 @@
 *
 ****/
 
-#include "barney.h"
+//Tell Ethan to check his stocking on christmas there's a cool gadget in there
 
+#include "barney.h"
 
 //=========================================================
 // Otis heads 
 //=========================================================
 
-#define		NUM_OTIS_HEADS		3 // two heads available for otis model
-enum { HEAD_NOHELM = 0, HEAD_NOHELM2 = 1, HEAD_HELM = 2, };
+#define	NUM_OTIS_HEADS	3 // three funny heads available for otis model
+
+#define BODYGROUP_GUN 1
+#define BODYGROUP_HEADS 2
+
+#define BODIES_HEAD
+enum
+{
+	HEAD_YOUNG = 0,
+	HEAD_OTIS,
+	HEAD_HELMET,
+};
+
+#define BODIES_GUN
+enum
+{
+	GUN_HOLSTERED = 0,
+	GUN_PYTHON,
+	GUN_DONUT,
+};
 
 //=========================================================
 // Monster's Anim Events Go Here
@@ -30,8 +49,6 @@ enum { HEAD_NOHELM = 0, HEAD_NOHELM2 = 1, HEAD_HELM = 2, };
 #define	OTIS_AE_SHOOT		( 3 )
 #define	OTIS_AE_HOLSTER		( 4 )
 
-#define	OTIS_BODY_GUNHOLSTERED	0
-#define	OTIS_BODY_GUNDRAWN		1
 
 class COtis : public CTalkMonster
 {
@@ -348,12 +365,12 @@ void COtis::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 	case OTIS_AE_DRAW:
 		// barney's bodygroup switches here so he can pull gun from holster
-		pev->body = OTIS_BODY_GUNDRAWN;
+		SetBodygroup(BODYGROUP_GUN, GUN_PYTHON);
 		m_fGunDrawn = TRUE;
 		break;
 
 	case OTIS_AE_HOLSTER:
-		pev->body = OTIS_BODY_GUNHOLSTERED;
+		SetBodygroup(BODYGROUP_GUN, GUN_HOLSTERED);
 		m_fGunDrawn = FALSE;
 		break;
 
@@ -381,14 +398,11 @@ void COtis::Spawn()
 	m_MonsterState = MONSTERSTATE_NONE;
 
 	// Otis Heads
-	if (pev->body == -1)
-	{// -1 chooses a random head
-		pev->body = RANDOM_LONG(2, NUM_OTIS_HEADS - 1);// pick a head, any head
-	}
 
-	// gun in holster
-	pev->body = OTIS_BODY_GUNHOLSTERED;
-	m_fGunDrawn = FALSE;
+	{// -1 chooses a random head
+		if (pev->body <= -1)
+    SetBodygroup(BODYGROUP_HEADS, RANDOM_LONG(0, NUM_OTIS_HEADS - 1));
+	}
 
 	m_afCapability = bits_CAP_HEAR | bits_CAP_TURN_HEAD | bits_CAP_DOORS_GROUP;
 
@@ -546,12 +560,12 @@ void COtis::TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, T
 
 void COtis::Killed(entvars_t* pevAttacker, int iGib)
 {
-	if (pev->body < OTIS_BODY_GUNDRAWN)
+	if (GetBodygroup(BODYGROUP_GUN) == GUN_PYTHON)
 	{// drop the gun!
 		Vector vecGunPos;
 		Vector vecGunAngles;
 
-		pev->body = OTIS_BODY_GUNHOLSTERED;
+		SetBodygroup(BODYGROUP_GUN, GUN_HOLSTERED);
 
 		GetAttachment(0, vecGunPos, vecGunAngles);
 

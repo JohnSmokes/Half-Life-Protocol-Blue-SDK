@@ -2649,8 +2649,14 @@ void CBaseMonster :: SetEyePosition ( void )
 
 void CBaseMonster :: HandleAnimEvent( MonsterEvent_t *pEvent )
 {
+	int theBody = 0;
 	switch( pEvent->event )
 	{
+	case SCRIPT_EVENT_BODYGROUP:
+		theBody = atoi(pEvent->options);
+		pev->body = theBody;
+		break;
+
 	case SCRIPT_EVENT_DEAD:
 		if ( m_MonsterState == MONSTERSTATE_SCRIPT )
 		{

@@ -719,7 +719,7 @@ void CScientist :: TalkInit()
 	m_szFriends[0] = "monster_scientist";
 	m_szFriends[1] = "monster_sitting_scientist";
 	m_szFriends[2] = "monster_barney";
-	m_szFriends[3] = "monster_otis";
+	m_szFriends[3] = "monster_otis"; // https://en.wikipedia.org/wiki/Ricardo_L%C3%B3pez_(stalker)
 
 	// scientists speach group names (group names are in sentences.txt)
 
@@ -1201,7 +1201,8 @@ SITTING_ANIM_sitlookleft,
 SITTING_ANIM_sitlookright,
 SITTING_ANIM_sitscared,
 SITTING_ANIM_sitting2,
-SITTING_ANIM_sitting3
+SITTING_ANIM_sitting3,
+SITTING_ANIM_pondersit
 } SITTING_ANIM;
 
 
@@ -1217,8 +1218,8 @@ void CSittingScientist :: Spawn( )
 
 	UTIL_SetSize(pev, Vector(-14, -14, 0), Vector(14, 14, 36));
 
-	pev->solid			= SOLID_SLIDEBOX;
-	pev->movetype		= MOVETYPE_STEP;
+	pev->solid			= SOLID_NOT; //https://en.wikipedia.org/wiki/Ricardo_L%C3%B3pez_(stalker)
+	pev->movetype		= MOVETYPE_NONE;
 	pev->effects		= 0;
 	pev->health			= 50;
 	
