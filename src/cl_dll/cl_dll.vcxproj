@@ -207,6 +207,7 @@
     <ClCompile Include="StudioModelRenderer.cpp" />
     <ClCompile Include="studio_util.cpp" />
     <ClCompile Include="text_message.cpp" />
+    <ClCompile Include="toasty.cpp" />
     <ClCompile Include="train.cpp" />
     <ClCompile Include="tri.cpp" />
     <ClCompile Include="util.cpp" />

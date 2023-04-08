@@ -229,6 +229,9 @@
     <ClCompile Include="zoom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="toasty.cpp">
+      <Filter>Source Files\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parsemsg.h">

@@ -115,7 +115,7 @@ int CUSAS::GetItemInfo(ItemInfo* p)
 
 BOOL CUSAS::Deploy()
 {
-	return DefaultDeploy("models/v_usas.mdl", "models/p_autoass.mdl", USAS_DEPLOY, "shotgun");	// jay - the last line here is the player animation. this should be "shotgun" here, as "aa12" doesn't exist
+	return DefaultDeploy("models/v_usas.mdl", "models/p_9mmAR.mdl", USAS_DEPLOY, "shotgun");	// jay - the last line here is the player animation. this should be "shotgun" here, as "aa12" doesn't exist
 }
 
 

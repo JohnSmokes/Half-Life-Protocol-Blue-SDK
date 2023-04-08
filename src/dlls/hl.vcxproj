@@ -149,6 +149,7 @@
     <ClCompile Include="..\pm_shared\pm_shared.c" />
     <ClCompile Include="construction.cpp" />
     <ClCompile Include="prop_physics.cpp" />
+    <ClCompile Include="therot.cpp" />
     <ClCompile Include="usas12.cpp" />
     <ClCompile Include="aflock.cpp" />
     <ClCompile Include="agrunt.cpp" />
