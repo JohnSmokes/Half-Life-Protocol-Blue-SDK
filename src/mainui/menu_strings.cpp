@@ -422,7 +422,7 @@ char *MenuStrings[HINT_MAXSTRINGS] =
 "",
 "Find more about Valve's product lineup",	// 400
 "",
-"http://store.steampowered.com/app/70/",
+"https://twitter.com/PapaSmokesII/status/1644392700026683399",
 "",
 "",
 "",

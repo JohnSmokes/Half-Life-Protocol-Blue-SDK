@@ -364,9 +364,9 @@ static void UI_Main_Init( void )
 
 	uiMain.resumeGame.generic.id = ID_RESUME;
 	uiMain.resumeGame.generic.type = QMTYPE_BM_BUTTON;
-	uiMain.resumeGame.generic.name = "Resume game";
+	uiMain.resumeGame.generic.name = 0;
 	uiMain.resumeGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiMain.resumeGame.generic.statusText = MenuStrings[HINT_RESUME_GAME];
+	uiMain.resumeGame.generic.statusText = 0;
 	uiMain.resumeGame.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.resumeGame.generic.y = 230;
 	uiMain.resumeGame.generic.callback = UI_Main_Callback;
@@ -375,9 +375,9 @@ static void UI_Main_Init( void )
 
 	uiMain.newGame.generic.id = ID_NEWGAME;
 	uiMain.newGame.generic.type = QMTYPE_BM_BUTTON;
-	uiMain.newGame.generic.name = "New game";
+	uiMain.newGame.generic.name = 0;
 	uiMain.newGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiMain.newGame.generic.statusText = MenuStrings[HINT_NEWGAME];
+	uiMain.newGame.generic.statusText = 0;
 	uiMain.newGame.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.newGame.generic.y = 280;
 	uiMain.newGame.generic.callback = UI_Main_Callback;
@@ -391,7 +391,7 @@ static void UI_Main_Init( void )
 	uiMain.hazardCourse.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.hazardCourse.generic.name = "Hazard course";
 	uiMain.hazardCourse.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
-	uiMain.hazardCourse.generic.statusText = MenuStrings[HINT_HAZARD_COURSE];
+	uiMain.hazardCourse.generic.statusText = 0;
 	uiMain.hazardCourse.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.hazardCourse.generic.y = 330;
 	uiMain.hazardCourse.generic.callback = UI_Main_Callback;
@@ -413,13 +413,13 @@ static void UI_Main_Init( void )
 	if( CL_IsActive( ))
 	{
 		uiMain.saveRestore.generic.name = "Save\\Load Game";
-		uiMain.saveRestore.generic.statusText = MenuStrings[HINT_SAVELOADGAME];
+		uiMain.saveRestore.generic.statusText = 0;
 		UI_UtilSetupPicButton(&uiMain.saveRestore,PC_SAVE_LOAD_GAME);
 	}
 	else
 	{
 		uiMain.saveRestore.generic.name = "Load Game";
-		uiMain.saveRestore.generic.statusText = MenuStrings[HINT_LOADGAME];
+		uiMain.saveRestore.generic.statusText = 0;
 		uiMain.resumeGame.generic.flags |= QMF_HIDDEN;
 		UI_UtilSetupPicButton( &uiMain.saveRestore, PC_LOAD_GAME );
 	}
@@ -432,7 +432,7 @@ static void UI_Main_Init( void )
 	uiMain.configuration.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.configuration.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.configuration.generic.name = "Configuration";
-	uiMain.configuration.generic.statusText = MenuStrings[HINT_CONFIGURATION];
+	uiMain.configuration.generic.statusText = 0;
 	uiMain.configuration.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.configuration.generic.y = bTrainMap ? 430 : 380;
 	uiMain.configuration.generic.callback = UI_Main_Callback;
@@ -443,7 +443,7 @@ static void UI_Main_Init( void )
 	uiMain.multiPlayer.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.multiPlayer.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.multiPlayer.generic.name = "Multiplayer";
-	uiMain.multiPlayer.generic.statusText = MenuStrings[HINT_MULTIPLAYER];
+	uiMain.multiPlayer.generic.statusText = 0;
 	uiMain.multiPlayer.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.multiPlayer.generic.y = bTrainMap ? 480 : 430;
 	uiMain.multiPlayer.generic.callback = UI_Main_Callback;
@@ -463,7 +463,7 @@ static void UI_Main_Init( void )
 	uiMain.customGame.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.customGame.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.customGame.generic.name = "Custom Game";
-	uiMain.customGame.generic.statusText = MenuStrings[HINT_CUSTOM_GAME];
+	uiMain.customGame.generic.statusText = 0;
 	uiMain.customGame.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.customGame.generic.y = bTrainMap ? 530 : 480;
 	uiMain.customGame.generic.callback = UI_Main_Callback;
@@ -474,7 +474,7 @@ static void UI_Main_Init( void )
 	uiMain.previews.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.previews.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.previews.generic.name = "Previews";
-	uiMain.previews.generic.statusText = MenuStrings[HINT_PREVIEWS_TEXT];
+	uiMain.previews.generic.statusText = 0;
 	uiMain.previews.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.previews.generic.y = (bCustomGame) ? (bTrainMap ? 580 : 530) : (bTrainMap ? 530 : 480);
 	uiMain.previews.generic.callback = UI_Main_Callback;
@@ -489,7 +489,7 @@ static void UI_Main_Init( void )
 	uiMain.quit.generic.type = QMTYPE_BM_BUTTON;
 	uiMain.quit.generic.flags = QMF_HIGHLIGHTIFFOCUS|QMF_DROPSHADOW|QMF_NOTIFY;
 	uiMain.quit.generic.name = "Quit";
-	uiMain.quit.generic.statusText = MenuStrings[HINT_QUIT_BUTTON];
+	uiMain.quit.generic.statusText = 0;
 	uiMain.quit.generic.x = UI_MAINSELECTION_POSX;
 	uiMain.quit.generic.y = (bCustomGame) ? (bTrainMap ? 630 : 580) : (bTrainMap ? 580 : 530);
 	uiMain.quit.generic.callback = UI_Main_Callback;
