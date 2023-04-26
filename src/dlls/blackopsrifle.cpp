@@ -184,7 +184,16 @@ void CStealth::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 
 	PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), fUseAutoAim ? m_usFireScar1 : m_usFireScar2, 0.0, (float*)&g_vecZero, (float*)&g_vecZero, vecDir.x, vecDir.y, 0, 0, (m_iClip == 0) ? 1 : 0, 0);
 
-	//m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->time + flCycleTime;
+	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
+
+	Vector	vecShellVelocity = m_pPlayer->pev->velocity
+		+ gpGlobals->v_right * RANDOM_FLOAT(100, 200)
+		+ gpGlobals->v_up * RANDOM_FLOAT(100, 150)
+		+ gpGlobals->v_forward * 25;
+	EjectBrass(pev->origin + m_pPlayer->pev->view_ofs
+		+ gpGlobals->v_up * -12
+		+ gpGlobals->v_forward * 20
+		+ gpGlobals->v_right * 4, vecShellVelocity, pev->angles.y, m_iShell, TE_BOUNCE_SHELL);
 
 	if (!m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
 		// HEV suit - indicate out of ammo condition

@@ -52,7 +52,7 @@ void CUSAS::Spawn()
 	m_iId = WEAPON_USAS;
 	SET_MODEL(ENT(pev), "models/w_usas.mdl");
 
-	m_iDefaultAmmo = USAS_DEFAULT_GIVE;
+	m_iDefaultAmmo = USAS_MAX_CLIP;
 
 	FallInit();// get ready to fall
 }
@@ -125,7 +125,7 @@ void CUSAS::PrimaryAttack()
 	if (m_pPlayer->pev->waterlevel == 3)
 	{
 		PlayEmptySound();
-		m_flNextPrimaryAttack = gpGlobals->time + 0.2;
+		m_flNextPrimaryAttack = gpGlobals->time + 0.25;
 		return;
 	}
 
@@ -157,24 +157,11 @@ void CUSAS::PrimaryAttack()
 
 	EjectBrass(m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_up * -12 + gpGlobals->v_forward * 20 + gpGlobals->v_right * 4, vecShellVelocity, pev->angles.y, m_iShell, TE_BOUNCE_SHOTSHELL);
 
-	EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/usas_fire1.wav", RANDOM_FLOAT(0.95, 1.0), ATTN_NORM, 0, 93 + RANDOM_LONG(0, 0x1f));
-
+	EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_AUTO, "weapons/usas_fire1.wav", RANDOM_FLOAT(0.95, 1.0), ATTN_NORM, 0, 93 + RANDOM_LONG(0, 0x1f));
 
 	Vector vecSrc = m_pPlayer->GetGunPosition();
 	Vector vecAiming = m_pPlayer->GetAutoaimVector(AUTOAIM_5DEGREES);
 
-	/*
-		if (g_pGameRules->IsDeathmatch())
-		{
-			// altered deathmatch spread
-			m_pPlayer->FireBullets(4, vecSrc, vecAiming, VECTOR_CONE_DM_SHOTGUN, 2048, BULLET_PLAYER_BUCKSHOT, 0);
-		}
-		else
-		{
-			// regular old, untouched spread.
-			m_pPlayer->FireBullets(6, vecSrc, vecAiming, VECTOR_CONE_10DEGREES, 2048, BULLET_PLAYER_BUCKSHOT, 0);
-		}
-	*/
 	// jay - only use singleplayer spread, this is xash after all
 	m_pPlayer->FireBullets(6, vecSrc, vecAiming, VECTOR_CONE_10DEGREES, 2048, BULLET_PLAYER_BUCKSHOT, 0);
 
@@ -183,21 +170,11 @@ void CUSAS::PrimaryAttack()
 		m_pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
 
 	if (m_iClip != 0)
-		m_flNextPrimaryAttack = gpGlobals->time + 0.2;
+		m_flNextPrimaryAttack = gpGlobals->time + 0.25;
 
-	/*
-		if (m_iClip != 0)
-			m_flTimeWeaponIdle = gpGlobals->time + 5.0;
-		else
-			m_flTimeWeaponIdle = 0.75;
-	*/
-	// jay - not sure what's going on here; this will just kinda break the idle delay if you ran out of ammo
 	m_flTimeWeaponIdle = gpGlobals->time + 5;	// jay - fixed idle timer
 
-	//m_fInReload = 0;
-	// jay - unused shotgun variable
-
-	m_pPlayer->pev->punchangle.x -= 2;
+	m_pPlayer->pev->punchangle.x -= 5;
 }
 
 

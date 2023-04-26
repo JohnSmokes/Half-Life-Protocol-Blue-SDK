@@ -192,6 +192,7 @@ int gmsgAddELight = 0;
 int gmsgCheckFlash = 0;
 int gmsgRenderFire = 0;
 int gmsgZoom = 0;
+int gmsgFlareBar = 0;
 
 void LinkUserMessages( void )
 {
@@ -242,6 +243,8 @@ void LinkUserMessages( void )
 	gmsgCheckFlash = REG_USER_MSG("CheckFlash", -1); //bacontsu - send info to client if we have flashlight
 	gmsgRenderFire = REG_USER_MSG("RenderFire", -1); // bacontsu - clientside burning effect
 	gmsgZoom = REG_USER_MSG("ZoomHud", 1); // baconstu - scope zoom
+
+	gmsgFlareBar = REG_USER_MSG("FlareBar", -1); // contraz - flare bar
 }
 
 LINK_ENTITY_TO_CLASS( player, CBasePlayer );
@@ -3401,6 +3404,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "weapon_tripmine" );
 		GiveNamedItem( "weapon_usas");
 		GiveNamedItem( "weapon_scar");
+		GiveNamedItem("weapon_flare");
 #ifndef OEM_BUILD
 		GiveNamedItem( "weapon_357" );
 		GiveNamedItem( "ammo_357" );

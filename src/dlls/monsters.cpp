@@ -3519,9 +3519,9 @@ void CBaseMonster::RunFire(void)
 		WRITE_COORD(vecShootOrigin.y);
 		WRITE_COORD(vecShootOrigin.z);
 		WRITE_BYTE(15);     // radius
-		WRITE_BYTE(255);     // R
-		WRITE_BYTE(128);     // G
-		WRITE_BYTE(128);     // B
+		WRITE_BYTE(255);     // R old 255 128 128
+		WRITE_BYTE(160);     // G
+		WRITE_BYTE(0);     // B
 		WRITE_BYTE(5);     // life * 10
 		WRITE_BYTE(10); // decay
 		MESSAGE_END();

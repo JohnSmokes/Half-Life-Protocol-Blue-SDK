@@ -13,8 +13,11 @@
 * 
 * ---------------------------------------------------------------------------------------------------------------
 * Half-Life: Another Shift Flare Code - by Bacontsu
+* Modified by ConTraZVII
 * ---------------------------------------------------------------------------------------------------------------
 ****/
+
+#define FLARE_MAX_LIFE	250
 
 #include "extdll.h"
 #include "util.h"
@@ -67,7 +70,8 @@ void CFlare::Spawn( )
 	m_iId = WEAPON_FLARE;
 	pev->classname = MAKE_STRING("weapon_flare");
 	SET_MODEL(ENT(pev), "models/w_flarewep.mdl");
-	m_iClip = -1;
+	
+	m_iDefaultAmmo = 1;
 
 	FallInit();// get ready to fall down.
 }
@@ -84,15 +88,16 @@ void CFlare::Precache( void )
 int CFlare::GetItemInfo(ItemInfo *p)
 {
 	p->pszName = STRING(pev->classname);
-	p->pszAmmo1 = NULL;
-	p->iMaxAmmo1 = -1;
-	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->pszAmmo1 = "flare_ammo";
+	p->iMaxAmmo1 = 5;
+	p->pszAmmo2 = "flare_ammo2";
+	p->iMaxAmmo2 = FLARE_MAX_LIFE;
 	p->iMaxClip = WEAPON_NOCLIP;
 	p->iSlot = 0;
 	p->iPosition = 1;
 	p->iId = WEAPON_FLARE;
 	p->iWeight = CROWBAR_WEIGHT;
+
 	return 1;
 }
 
@@ -100,6 +105,9 @@ int CFlare::GetItemInfo(ItemInfo *p)
 
 BOOL CFlare::Deploy( )
 {
+	if (m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] <= 0)
+		m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] = FLARE_MAX_LIFE;
+
 	return DefaultDeploy( "models/v_flare.mdl", "models/w_flarewep.mdl", CROWBAR_DRAW, "flare" );
 }
 
@@ -111,87 +119,102 @@ void CFlare::Holster( )
 
 void CFlare::EmitLight()
 {
-	if (gpGlobals->frametime > 0)
-	{
-		// emit sound
-		if (m_flNextFlareSound < gpGlobals->time)
-		{
-			EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/flare_burning.wav", 5, ATTN_NORM, 0, 95 + RANDOM_LONG(0, 0x1f));
-			m_flNextFlareSound = gpGlobals->time + 2.0f;
-		}
-
-		// play idle animation
-		if (m_flNextIdleAnim < gpGlobals->time)
-		{
-			SendWeaponAnim(CROWBAR_IDLE);
-			m_flNextIdleAnim = gpGlobals->time + 2.8f;
-		}
-
-		// flickering effect
-		if (m_flNextFlareType < gpGlobals->time)
-		{
-			if (m_iFlareType < 6)
-				m_iFlareType++;
-			else
-				m_iFlareType = 0;
-
-			m_flNextFlareType = gpGlobals->time + 0.1f;
-		}
-
-		// emit dlight
-		UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
-		Vector src = m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_forward * 16;
-
-		MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
-		WRITE_BYTE(TE_DLIGHT);
-		WRITE_COORD(src.x); // origin
-		WRITE_COORD(src.y);
-		WRITE_COORD(src.z);
-
-		if(m_iFlareType < 3)
-		WRITE_BYTE(15 + m_iFlareType);     // radius
-		else
-			WRITE_BYTE(15 + 5 - m_iFlareType);
-
-		WRITE_BYTE(200);     // R
-		WRITE_BYTE(150);     // G
-		WRITE_BYTE(150);     // B
-		WRITE_BYTE(0.1f);     // life * 10
-		WRITE_BYTE(0); // decay
-		MESSAGE_END();
-	}
 }
 
 void CFlare::PrimaryAttack()
 {	
-	Vector vecSrc = m_pPlayer->pev->origin;
+	if (!m_pPlayer->m_afButtonPressed & IN_ATTACK)
+		return;
 
+	Vector vecSrc = m_pPlayer->pev->origin;
 	Vector vecThrow = gpGlobals->v_forward * 274 + m_pPlayer->pev->velocity;
 
-	CBaseEntity* pSatchel = Create("item_flare", vecSrc, Vector(0, 0, 0), m_pPlayer->edict());
-	pSatchel->pev->velocity = vecThrow;
+	CBaseEntity* pFlare = Create("item_flare", vecSrc, Vector(0, 0, 0), m_pPlayer->edict());
+	pFlare->pev->velocity = vecThrow;
 
-	if (m_pPlayer)
-	{
-		// if attached to a player, remove.
-		//m_pPlayer->RemovePlayerItem(this);
-		m_pPlayer->pev->weapons &= ~(1 << WEAPON_FLARE);
-		SetThink(&CFlare::DestroyItem);
-		pev->nextthink = gpGlobals->time + 0.001;
-	}
-	//Drop();
+	SendWeaponAnim(CROWBAR_DRAW);
+	m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
+	m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] = FLARE_MAX_LIFE;
+	m_flNextPrimaryAttack = m_flTimeWeaponIdle = gpGlobals->time + 1;
 
-	m_flNextPrimaryAttack = gpGlobals->time + 1;
+	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] == 0)
+		RetireWeapon();
 }
 
 void CFlare::SecondaryAttack()
 {
-	EmitLight();
+	//EmitLight();
 }
 
 void CFlare::WeaponIdle()
 {
-	EmitLight();
+	if (m_flTimeWeaponIdle > gpGlobals->time)
+		return;
+
+	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
+	{
+		RetireWeapon();
+		return;
+	}
+
+	if (pev->dmgtime < gpGlobals->time)
+	{
+		SendWeaponAnim(CROWBAR_IDLE);
+		pev->dmgtime = gpGlobals->time + 3;
+	}
+
+	m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType]--;
+	m_flTimeWeaponIdle = gpGlobals->time + 0.1;
+
+	if (m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 0)
+	{
+		m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] = FLARE_MAX_LIFE;
+		m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
+		m_flNextPrimaryAttack = m_flTimeWeaponIdle = gpGlobals->time + 1;
+		SendWeaponAnim(CROWBAR_DRAW);
+	}
+
+	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] == 0)
+		m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] = 0;
+
+	if (m_flNextFlareType < gpGlobals->time)
+	{
+		if (m_iFlareType < 6)
+			m_iFlareType++;
+		else
+			m_iFlareType = 0;
+
+		m_flNextFlareType = gpGlobals->time + 0.1f;
+	}
+
+	// emit dlight
+	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
+	Vector src = m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_forward * 16;
+
+	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
+	WRITE_BYTE(TE_DLIGHT);
+	WRITE_COORD(src.x); // origin
+	WRITE_COORD(src.y);
+	WRITE_COORD(src.z);
+
+	if (m_iFlareType < 3)
+		WRITE_BYTE(15 + m_iFlareType);     // radius
+	else
+		WRITE_BYTE(15 + 5 - m_iFlareType);
+
+	WRITE_BYTE(255);     // R old - 200 150 150
+	WRITE_BYTE(160);     // G
+	WRITE_BYTE(0);     // B
+	WRITE_BYTE(1);     // life * 10
+	WRITE_BYTE(0); // decay
+	MESSAGE_END();
+
+	// emit sound
+	if (m_flNextFlareSound < gpGlobals->time)
+	{
+		EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_ITEM, "weapons/flare_burning.wav", 5, ATTN_NORM, 0, 95 + RANDOM_LONG(0, 0x1f));
+		m_flNextFlareSound = gpGlobals->time + 2.0f;
+	}
 }
 
 
@@ -252,6 +275,7 @@ void CFlareItem::Spawn(void)
 
 	// ResetSequenceInfo( );
 	pev->sequence = 1;
+	pev->dmgtime = gpGlobals->time + 120;
 }
 
 
@@ -262,12 +286,6 @@ void CFlareItem::FlareSlide(CBaseEntity* pOther)
 	// don't hit the guy that launched this grenade
 	if (pOther->edict() == pev->owner)
 		return;
-
-	if (FClassnameIs(pOther->pev, "monster_zombie"))
-	{
-		CBaseMonster* pTarget = pOther->MyMonsterPointer();
-		pTarget->m_bIsOnFire = TRUE;
-	}
 
 	// pev->avelocity = Vector (300, 300, 300);
 	pev->gravity = 1;// normal gravity now
@@ -292,6 +310,18 @@ void CFlareItem::FlareSlide(CBaseEntity* pOther)
 
 void CFlareItem::FlareThink(void)
 {
+	CBaseEntity* pEntity = NULL;	// iterate on all entities in the vicinity.
+	while ((pEntity = UTIL_FindEntityInSphere(pEntity, pev->origin, 64)) != NULL)
+	{
+		if (FClassnameIs(pEntity->pev, "monster_zombie")
+			|| FClassnameIs(pEntity->pev, "monster_zombie_barney")
+			|| FClassnameIs(pEntity->pev, "monster_zombie_soldier"))
+		{
+			CBaseMonster* pTarget = pEntity->MyMonsterPointer();
+			pTarget->m_bIsOnFire = TRUE;
+		}
+	}
+
 	pev->nextthink = gpGlobals->time + 0.001;
 
 	if (!IsInWorld())
@@ -365,32 +395,45 @@ void CFlareItem::FlareThink(void)
 	else
 		WRITE_BYTE(13 + 5 - m_iFlareType);
 
-	WRITE_BYTE(200);     // R
-	WRITE_BYTE(150);     // G
-	WRITE_BYTE(150);     // B
+	WRITE_BYTE(255);     // R old - 200 150 150
+	WRITE_BYTE(160);     // G
+	WRITE_BYTE(0);     // B
 	WRITE_BYTE(0.1f);     // life * 10
 	WRITE_BYTE(0); // decay
 	MESSAGE_END();
 
+	UTIL_Sparks(pev->origin);
+	
+	if (pev->dmgtime < gpGlobals->time)
+	{
+		MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, pev->origin);
+		WRITE_BYTE(TE_SMOKE);
+		WRITE_COORD(pev->origin.x);
+		WRITE_COORD(pev->origin.y);
+		WRITE_COORD(pev->origin.z);
+		WRITE_SHORT(g_sModelIndexSmoke);
+		WRITE_BYTE(25); // scale * 10
+		WRITE_BYTE(15); // framerate
+		MESSAGE_END();
+
+		UTIL_Remove(this);
+	}
 }
 
 void CFlareItem::FlareUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
 {
-	if (!pActivator->IsPlayer()) return;
+	/*
+	if (!pActivator->IsPlayer())
+		return;
 
 	CBasePlayer* pPlayer = static_cast<CBasePlayer*>(pActivator);
+	if (pPlayer->HasNamedPlayerItem("weapon_flare"))
+		pPlayer->GiveAmmo(pev->weapons, "flare_ammo", 250);
+	else
+		pPlayer->GiveNamedItem("weapon_flare");
 
-	if (pPlayer->HasNamedPlayerItem("weapon_flare")) return;
-
-	Vector src = pActivator->pev->origin;
-	Vector ang = pActivator->pev->angles;
-
-	CBaseEntity* flare;
-	flare = CFlareItem::Create("weapon_flare", src, ang);
-	flare->pev->effects |= EF_NODRAW;
-
-	pev->solid = SOLID_NOT;
 	UTIL_Remove(this);
+	*/
 }
 
 void CFlareItem::Precache(void)
