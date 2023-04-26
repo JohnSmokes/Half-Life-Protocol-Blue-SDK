@@ -341,13 +341,22 @@ class CItemLongJump : public CItem
 
 LINK_ENTITY_TO_CLASS( item_longjump, CItemLongJump );
 
+#define SF_ARMOR_FLY	1
+
 class CItemHelmet : public CItem
 {
 	void Spawn(void)
 	{
 		Precache();
 		SET_MODEL(ENT(pev), "models/Barney_Helmet.mdl");
-		CItem::Spawn();
+		if (pev->spawnflags & SF_ARMOR_FLY)
+			pev->movetype = MOVETYPE_FLY;
+		else
+			pev->movetype = MOVETYPE_TOSS;
+		pev->solid = SOLID_TRIGGER;
+		UTIL_SetOrigin(pev, pev->origin);
+		UTIL_SetSize(pev, Vector(-16, -16, 0), Vector(16, 16, 16));
+		SetTouch(&CItem::ItemTouch);
 	}
 	void Precache(void)
 	{
@@ -402,7 +411,14 @@ class CItemArmorVest : public CItem
 	{
 		Precache();
 		SET_MODEL(ENT(pev), "models/Barney_Vest.mdl");
-		CItem::Spawn();
+		if (pev->spawnflags & SF_ARMOR_FLY)
+			pev->movetype = MOVETYPE_FLY;
+		else
+			pev->movetype = MOVETYPE_TOSS;
+		pev->solid = SOLID_TRIGGER;
+		UTIL_SetOrigin(pev, pev->origin);
+		UTIL_SetSize(pev, Vector(-16, -16, 0), Vector(16, 16, 16));
+		SetTouch(&CItem::ItemTouch);
 	}
 	void Precache(void)
 	{
@@ -460,7 +476,14 @@ class CItemFlashlight : public CItem
 	{
 		Precache();
 		SET_MODEL(ENT(pev), "models/w_flashlight.mdl");
-		CItem::Spawn();
+		if (pev->spawnflags & SF_ARMOR_FLY)
+			pev->movetype = MOVETYPE_FLY;
+		else
+			pev->movetype = MOVETYPE_TOSS;
+		pev->solid = SOLID_TRIGGER;
+		UTIL_SetOrigin(pev, pev->origin);
+		UTIL_SetSize(pev, Vector(-16, -16, 0), Vector(16, 16, 16));
+		SetTouch(&CItem::ItemTouch);
 	}
 	void Precache(void)
 	{

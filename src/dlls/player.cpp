@@ -2798,6 +2798,7 @@ void CBasePlayer::Spawn( void )
 	m_flNextChatTime = gpGlobals->time;
 
 	g_pGameRules->PlayerSpawn( this );
+	pev->weapons |= (1 << WEAPON_SUIT);
 }
 
 
