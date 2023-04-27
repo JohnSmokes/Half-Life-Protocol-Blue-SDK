@@ -22,7 +22,8 @@
 #include "cbase.h"
 #include "monsters.h"
 #include "nodes.h"
-#include "scar.h"
+#include "weapons.h"
+#include "player.h"
 
 enum stealth_e {
 	STEALTH_LONGIDLE = 0,
@@ -32,8 +33,31 @@ enum stealth_e {
 	STEALTH_SHOOT
 };
 
-LINK_ENTITY_TO_CLASS(weapon_stealth, CStealth);
+class CStealth : public CBasePlayerWeapon
+{
+public:
+	void Spawn();
+	void Precache();
+	int iItemSlot() { return 2; }
+	int GetItemInfo(ItemInfo* p);
+	//burst - add these two
+	int ammoToShoot;
+	float nextBurstShoot;
 
+	void IncrementAmmo(CBasePlayer* pPlayer);
+	void PrimaryAttack();
+	void SecondaryAttack();
+	void ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim);
+	BOOL Deploy();
+	void Holster();
+	void Reload();
+	void WeaponIdle();
+	void ItemPostFrame();
+
+private:
+	int m_iShell;
+};
+LINK_ENTITY_TO_CLASS(weapon_stealth, CStealth);
 
 void CStealth::Spawn()
 {
@@ -59,7 +83,6 @@ void CStealth::Precache(void)
 	PRECACHE_SOUND("weapons/ssr_fire1.wav");//silenced scar
 	PRECACHE_SOUND("weapons/sniper_zoom.wav");
 	PRECACHE_SOUND("weapons/sniper_miss.wav");
-
 }
 
 int CStealth::GetItemInfo(ItemInfo* p)
@@ -125,6 +148,21 @@ void CStealth::SecondaryAttack(void)
 	m_flNextSecondaryAttack = gpGlobals->time + 0.5;
 }
 
+void CStealth::ItemPostFrame()
+{
+	// custom burst feature
+	if (nextBurstShoot < gpGlobals->time && ammoToShoot > 0)
+	{
+		float delay = 0.05f;
+
+		ScarFire(0.01, delay, FALSE);
+		nextBurstShoot = gpGlobals->time + delay;
+		ammoToShoot--;
+	}
+
+	CBasePlayerWeapon::ItemPostFrame();
+}
+
 void CStealth::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 {
 	if (m_iClip <= 0)
@@ -143,7 +181,7 @@ void CStealth::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 
 	m_pPlayer->pev->effects = (int)(m_pPlayer->pev->effects) | EF_MUZZLEFLASH;
 
-	int flags;
+	//int flags;
 
 	if (m_iClip != 0)
 		SendWeaponAnim(STEALTH_SHOOT);
@@ -182,7 +220,7 @@ void CStealth::ScarFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	Vector vecDir;
 	m_pPlayer->FireBullets(1, vecSrc, vecAiming, Vector(flSpread, flSpread, flSpread), 8192, BULLET_PLAYER_762, 0);
 
-	PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), fUseAutoAim ? m_usFireScar1 : m_usFireScar2, 0.0, (float*)&g_vecZero, (float*)&g_vecZero, vecDir.x, vecDir.y, 0, 0, (m_iClip == 0) ? 1 : 0, 0);
+	//PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), fUseAutoAim ? m_usFireScar1 : m_usFireScar2, 0.0, (float*)&g_vecZero, (float*)&g_vecZero, vecDir.x, vecDir.y, 0, 0, (m_iClip == 0) ? 1 : 0, 0);
 
 	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
 
@@ -226,21 +264,18 @@ void CStealth::WeaponIdle(void)
 	// only idle if the slid isn't back
 	if (m_iClip != 0)
 	{
-		int iAnim;
 		float flRand = UTIL_SharedRandomFloat(m_pPlayer->random_seed, 0.0, 1.0);
 
 		if (flRand <= 0.3 + 0 * 0.75)
 		{
-			iAnim = STEALTH_LONGIDLE;
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 49.0 / 16;
-		}
-		else if (flRand <= 0.6 + 0 * 0.875)
-		{
-			iAnim = STEALTH_IDLE1;
-			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 60.0 / 16.0;
+			SendWeaponAnim(STEALTH_LONGIDLE);
 		}
 		else
-		SendWeaponAnim(iAnim, 1);
+		{
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 60.0 / 16.0;
+			SendWeaponAnim(STEALTH_IDLE1);
+		}
 	}
 }
 

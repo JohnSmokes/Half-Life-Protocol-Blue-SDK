@@ -1198,9 +1198,9 @@ int CStudioModelRenderer::StudioDrawModel( int flags )
 		StudioRenderModel( );
 
 		// flare weapon effect
-		if (m_pCurrentEntity == gEngfuncs.GetViewModel());
+		if (m_pCurrentEntity == gEngfuncs.GetViewModel())
 		{
-			if (!strcmp(m_pCurrentEntity->model->name, "models/v_flare.mdl"))
+			if (!strncmp(m_pCurrentEntity->model->name, "models/v_flare.mdl", sizeof(m_pCurrentEntity->model->name)))
 			{
 				Vector org = m_pCurrentEntity->attachment[0];
 
