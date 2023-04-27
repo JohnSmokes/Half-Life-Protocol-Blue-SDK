@@ -35,6 +35,7 @@
 .vs/
 [Ss]rc/[Bb]uild/
 [Bb]uild/
+[Ii]nt/
 [Dd]ev/
 src/cl_dll/cl_dll.vcxproj
 src/dlls/hl.vcxproj

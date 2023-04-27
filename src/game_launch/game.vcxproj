@@ -26,8 +26,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\..\ashiftxash</OutDir>
-    <IntDir>$(SolutionDir)build\$(TargetName)\</IntDir>
+    <OutDir>$(SolutionDir)\..\build\</OutDir>
+    <IntDir>$(SolutionDir)\..\int\game\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <TargetName>ashift</TargetName>
   </PropertyGroup>
@@ -64,7 +64,7 @@
       <SubSystem>Windows</SubSystem>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalDependencies>msvcrt.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ProgramDatabaseFile>$(SolutionDir)build\$(TargetName)\$(TargetName).pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ImportLibrary>$(SolutionDir)build\$(TargetName)\$(TargetName).lib</ImportLibrary>
     </Link>
     <CustomBuildStep>
